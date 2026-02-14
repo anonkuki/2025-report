@@ -396,5 +396,6 @@ type User = {
 
 已生成自动提取附录：code1/code/VARIABLES_AND_PARAMS.md
 
+
 - 覆盖：const/let/var 声明、function 声明、对象方法、类方法签名。
 - 用途：当你需要逐行核对“所有变量和参数”时，直接查看该附录。
