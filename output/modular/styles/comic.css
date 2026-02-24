@@ -1,0 +1,157 @@
+/**
+ * 漫画风格 - 外宣部
+ * Comic Style
+ */
+
+:root {
+    --comic-yellow: #ffe259;
+    --comic-orange: #ffa751;
+    --comic-red: #ff6b6b;
+    --comic-black: #2d2d2d;
+    --comic-white: #ffffff;
+}
+
+/* 分镜效果 */
+.comic-panel {
+    border: 4px solid var(--comic-black);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 6px 6px 0 var(--comic-black);
+}
+
+/* 漫画气泡 */
+.speech-bubble {
+    background: var(--comic-white);
+    border: 3px solid var(--comic-black);
+    border-radius: 20px;
+    padding: 15px 20px;
+    position: relative;
+}
+
+.speech-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 30px;
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 0 solid transparent;
+    border-top: 15px solid var(--comic-black);
+}
+
+.speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 34px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 0 solid transparent;
+    border-top: 10px solid var(--comic-white);
+}
+
+/* 漫画标题 */
+.comic-title {
+    font-family: 'Comic Sans MS', cursive;
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--comic-yellow);
+    text-shadow:
+        3px 3px 0 var(--comic-black),
+        -1px -1px 0 var(--comic-black),
+        1px -1px 0 var(--comic-black),
+        -1px 1px 0 var(--comic-black);
+    transform: rotate(-2deg);
+}
+
+/* 漫画对话框 */
+.comic-box {
+    background: var(--comic-white);
+    border: 3px solid var(--comic-black);
+    padding: 15px;
+    position: relative;
+    box-shadow: 4px 4px 0 var(--comic-black);
+}
+
+/* 网点效果 */
+.dot-pattern {
+    background-image: radial-gradient(var(--comic-black) 1px, transparent 1px);
+    background-size: 8px 8px;
+}
+
+/* 爆炸效果 */
+.explosion {
+    background: var(--comic-yellow);
+    clip-path: polygon(
+        50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%,
+        50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
+    );
+    animation: pop 0.5s ease-out;
+}
+
+@keyframes pop {
+    0% { transform: scale(0); }
+    80% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* 漫画按钮 */
+.comic-btn {
+    font-family: 'Comic Sans MS', cursive;
+    font-weight: bold;
+    font-size: 18px;
+    background: var(--comic-yellow);
+    color: var(--comic-black);
+    border: 3px solid var(--comic-black);
+    padding: 12px 24px;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 4px 4px 0 var(--comic-black);
+    transition: all 0.1s;
+}
+
+.comic-btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--comic-black);
+}
+
+.comic-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+}
+
+/* 强调线 */
+.emphasis-line {
+    background: var(--comic-red);
+    height: 8px;
+    width: 100px;
+    display: inline-block;
+    transform: rotate(-1deg);
+}
+
+/* 漫画卡片 */
+.comic-card {
+    background: var(--comic-white);
+    border: 4px solid var(--comic-black);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+}
+
+/* 网点遮罩 */
+.stipple-mask {
+    position: relative;
+    overflow: hidden;
+}
+
+.stipple-mask::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(0,0,0,0.1) 1px, transparent 1px);
+    background-size: 6px 6px;
+    pointer-events: none;
+}

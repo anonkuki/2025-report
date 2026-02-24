@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>船票 - 佐佑年度报告</title>
+    <link rel="stylesheet" href="../styles/base.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
+        }
+
+        .ticket-wrapper {
+            perspective: 1000px;
+        }
+
+        .ticket {
+            width: 380px;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.5),
+                0 0 100px rgba(0, 210, 255, 0.1);
+            transform-style: preserve-3d;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotateX(0); }
+            50% { transform: translateY(-10px) rotateX(2deg); }
+        }
+
+        .ticket::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5, #00d2ff);
+        }
+
+        .ticket-header {
+            padding: 30px 30px 20px;
+            text-align: center;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .ticket-logo {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+        }
+
+        .ticket-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ticket-subtitle {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 8px;
+            letter-spacing: 2px;
+        }
+
+        .ticket-body {
+            padding: 30px;
+        }
+
+        .passenger-info {
+            margin-bottom: 25px;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+
+        .info-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .ticket-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .detail-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .ticket-footer {
+            padding: 20px 30px 30px;
+            text-align: center;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .ticket-code {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 4px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .barcode {
+            height: 50px;
+            background: repeating-linear-gradient(
+                90deg,
+                #fff 0px,
+                #fff 2px,
+                transparent 2px,
+                transparent 4px,
+                transparent 6px,
+                #fff 6px,
+                #fff 8px
+            );
+            opacity: 0.8;
+            margin-top: 15px;
+            border-radius: 4px;
+        }
+
+        .enter-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin-top: 20px;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .enter-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.3);
+        }
+
+        /* 半圆切口 */
+        .notch {
+            position: absolute;
+            bottom: 120px;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
+            border-radius: 50%;
+        }
+
+        .notch-left { left: -15px; }
+        .notch-right { right: -15px; }
+    </style>
+</head>
+<body>
+    <div class="ticket-wrapper">
+        <div class="ticket">
+            <div class="notch notch-left"></div>
+            <div class="notch notch-right"></div>
+
+            <div class="ticket-header">
+                <div class="ticket-logo">ZOYOU SPACE</div>
+                <div class="ticket-title">星际船票</div>
+                <div class="ticket-subtitle">VOYAGE TICKET</div>
+            </div>
+
+            <div class="ticket-body">
+                <div class="passenger-info">
+                    <div class="info-label">乘客 NAME</div>
+                    <div class="info-value" id="passengerName">用户名</div>
+                </div>
+
+                <div class="ticket-details">
+                    <div class="detail-item">
+                        <div class="info-label">登船时间</div>
+                        <div class="info-value" style="font-size: 18px;">2025/2026</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="info-label">座位 CLASS</div>
+                        <div class="info-value" style="font-size: 18px;">VIP</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="info-label">航线 DESTINATION</div>
+                        <div class="info-value" style="font-size: 16px;">佐佑星球</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="info-label">航程 JOURNEY</div>
+                        <div class="info-value" style="font-size: 16px;">年度报告</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ticket-footer">
+                <div class="ticket-code">NO. ZY2026-001</div>
+                <div class="barcode"></div>
+            </div>
+
+            <button class="enter-btn" onclick="enterReport()">
+                登船探索 ✨
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 从 URL 参数或数据获取用户名
+        const params = new URLSearchParams(window.location.search);
+        const userName = params.get('name') || '游客';
+        document.getElementById('passengerName').textContent = userName;
+
+        function enterReport() {
+            // 跳转逻辑
+            window.location.href = 'galaxy.html';
+        }
+    </script>
+</body>
+</html>

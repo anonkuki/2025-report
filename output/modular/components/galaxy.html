@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星系 - 佐佑年度报告</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        #galaxyCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .ui-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .title-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: auto;
+        }
+
+        .main-title {
+            font-size: 64px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(0, 210, 255, 0.8);
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.5s;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 8px;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 1s;
+        }
+
+        .hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 1.5s;
+        }
+
+        .user-list {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 12px;
+            max-height: 80vh;
+            overflow-y: auto;
+            pointer-events: auto;
+        }
+
+        .user-item {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        .user-item:hover {
+            background: rgba(0, 210, 255, 0.2);
+            color: #fff;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -30%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .hint {
+            animation: fadeInHint 1s ease forwards 1.5s;
+        }
+
+        @keyframes fadeInHint {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="galaxyCanvas"></canvas>
+
+    <div class="ui-overlay">
+        <div class="title-container">
+            <h1 class="main-title">佐佑星际</h1>
+            <p class="subtitle">GALACTIC YEARBOOK</p>
+        </div>
+
+        <div class="hint">点击星球进入个人年度报告</div>
+
+        <div class="user-list" id="userList">
+            <!-- 用户列表 -->
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Three.js 星空背景
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('galaxyCanvas'), antialias: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        // 创建星空
+        const starsGeometry = new THREE.BufferGeometry();
+        const starsCount = 5000;
+        const posArray = new Float32Array(starsCount * 3);
+
+        for(let i = 0; i < starsCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 2000;
+        }
+
+        starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const starsMaterial = new THREE.PointsMaterial({
+            size: 2,
+            color: 0x00d2ff,
+            transparent: true,
+            opacity: 0.8
+        });
+
+        const stars = new THREE.Points(starsGeometry, starsMaterial);
+        scene.add(stars);
+
+        // 创建中心星系
+        const galaxyGroup = new THREE.Group();
+        scene.add(galaxyGroup);
+
+        // 模拟用户星球
+        const users = ['用户A', '用户B', '用户C', '用户D'];
+        users.forEach((user, i) => {
+            const angle = (i / users.length) * Math.PI * 2;
+            const radius = 300;
+            const planetGeometry = new THREE.SphereGeometry(20, 32, 32);
+            const planetMaterial = new THREE.MeshBasicMaterial({
+                color: new THREE.Color().setHSL(i / users.length, 0.8, 0.5)
+            });
+            const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+            planet.position.x = Math.cos(angle) * radius;
+            planet.position.z = Math.sin(angle) * radius;
+            planet.userData = { name: user };
+            galaxyGroup.add(planet);
+        });
+
+        camera.position.z = 600;
+
+        // 动画循环
+        function animate() {
+            requestAnimationFrame(animate);
+            galaxyGroup.rotation.y += 0.001;
+            stars.rotation.y += 0.0002;
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // 响应式
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // 点击事件
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        document.addEventListener('click', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(galaxyGroup.children);
+
+            if (intersects.length > 0) {
+                const userName = intersects[0].object.userData.name;
+                console.log('点击了用户:', userName);
+                // 跳转逻辑
+            }
+        });
+    </script>
+</body>
+</html>
