@@ -1,5 +1,9 @@
 ﻿# 🌌 佐佑动漫社 2025 年度总结 — 星际航行
 
+## 协作者
+
+- youminga1279
+
 <p align="center">
   <img src="picture/首页.png" alt="首页效果" width="600">
 </p>
@@ -298,7 +302,7 @@ python -m http.server 8080
 
 ## 🤝 贡献
 
-本项目由**佐佑动漫社技术部**维护。如需修改部门数据或新增页面，请参考 [开发指南](docs/development-guide.md)。
+本项目由**佐佑动漫社外宣部**维护。如需修改部门数据或新增页面，请参考 [开发指南](docs/development-guide.md)。
 
 ---
 
