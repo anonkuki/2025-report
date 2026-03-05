@@ -1,0 +1,69 @@
+<!--
+  ============================================================
+  佐佑动漫社 2025 年度总结 — 登录层 HTML 结构
+  ============================================================
+  
+  功能：首页登录界面
+  - 显示 "ZUOYOU ANNUAL REPORT" 主标题
+  - 用户输入姓名进行身份验证
+  - 点击 "PRESS START" 按钮触发 verifyUser()
+  
+  Phase: body.phase-login (默认初始状态)
+  当切换到其他 phase 时，该层通过 CSS opacity:0 + pointer-events:none 隐藏
+  
+  依赖：
+  - verifyUser() 函数 (定义在主脚本中)
+  - CSS 变量 --font-arcade, --font-body, --accent-blue 等
+  ============================================================
+-->
+
+<!-- 星云光晕 - 用于转场闪白效果 -->
+<div class="nebula-cloud cloud-1"></div>
+<div class="nebula-cloud cloud-2"></div>
+
+<!-- 流星层 -->
+<div class="meteor-container" id="meteor-layer"></div>
+
+<!-- 阶段1: 登录界面 -->
+<div id="login-layer">
+    <!-- 装饰性几何元素 -->
+    <div class="deco-line deco-line-1"></div>
+    <div class="deco-line deco-line-2"></div>
+    <div class="deco-circle deco-circle-1"></div>
+    <div class="deco-circle deco-circle-2"></div>
+
+    <!-- Logo 区域（隐藏，仅保留粒子效果） -->
+    <div class="logo-container">
+        <img src="[base64-logo]" alt="佐佑动漫社" class="main-logo">
+        <div class="logo-glow"></div>
+    </div>
+
+    <!-- 年份标识 -->
+    <div class="year-badge">2025 NEBULA</div>
+
+    <!-- 主标题 -->
+    <h1 class="hero-title">
+        <span class="title-main">ZUOYOU</span>
+        <span class="title-sub">ANNUAL REPORT</span>
+    </h1>
+
+    <!-- 底部 CREDITS 显示 -->
+    <div class="credits-display">
+        CREDITS: <span id="total-counts">--</span>
+    </div>
+
+    <!-- 登录表单 -->
+    <div class="login-box">
+        <div class="login-decor">
+            <div class="corner-bracket corner-tl"></div>
+            <div class="corner-bracket corner-tr"></div>
+            <div class="corner-bracket corner-bl"></div>
+            <div class="corner-bracket corner-br"></div>
+        </div>
+        <input type="text" id="username" placeholder="INSERT COIN (NAME)" autocomplete="off">
+        <button class="glass-btn" onclick="verifyUser()">
+            <span class="btn-text">PRESS START</span>
+        </button>
+        <div id="error-msg" style="color:#ff4d4d; font-size:12px; margin-top:15px; min-height:16px;"></div>
+    </div>
+</div>

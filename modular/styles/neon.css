@@ -1,0 +1,141 @@
+/**
+ * 霓虹风格 - 轻音部
+ * Neon Style
+ */
+
+:root {
+    --neon-pink: #ff006e;
+    --neon-purple: #8338ec;
+    --neon-blue: #3a86ff;
+    --neon-yellow: #ffbe0b;
+    --neon-bg: #0d0d1a;
+    --neon-gradient: linear-gradient(135deg, var(--neon-pink), var(--neon-purple), var(--neon-blue));
+}
+
+/* 霓虹发光文字 */
+.neon-glow {
+    color: #fff;
+    text-shadow:
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px var(--neon-pink),
+        0 0 30px var(--neon-pink),
+        0 0 40px var(--neon-pink);
+}
+
+/* 渐变边框 */
+.gradient-border {
+    position: relative;
+    background: var(--neon-bg);
+    border-radius: 16px;
+}
+
+.gradient-border::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: var(--neon-gradient);
+    border-radius: 18px;
+    z-index: -1;
+}
+
+/* 脉冲动画 */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+.pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* 跳动音符 */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+.bounce-note {
+    display: inline-block;
+    animation: bounce 0.6s ease-in-out infinite;
+}
+
+/* 音乐波形 */
+.wave-bar {
+    width: 6px;
+    background: var(--neon-gradient);
+    border-radius: 3px;
+    animation: wave 1s ease-in-out infinite;
+}
+
+@keyframes wave {
+    0%, 100% { height: 20px; }
+    50% { height: 40px; }
+}
+
+.wave-container {
+    display: flex;
+    gap: 4px;
+    align-items: flex-end;
+    height: 50px;
+}
+
+.wave-bar:nth-child(1) { animation-delay: 0s; }
+.wave-bar:nth-child(2) { animation-delay: 0.1s; }
+.wave-bar:nth-child(3) { animation-delay: 0.2s; }
+.wave-bar:nth-child(4) { animation-delay: 0.3s; }
+.wave-bar:nth-child(5) { animation-delay: 0.4s; }
+
+/* 霓虹按钮 */
+.neon-btn {
+    background: transparent;
+    border: 2px solid var(--neon-pink);
+    color: var(--neon-pink);
+    padding: 14px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.neon-btn:hover {
+    background: var(--neon-pink);
+    color: #fff;
+    box-shadow:
+        0 0 10px var(--neon-pink),
+        0 0 20px var(--neon-pink),
+        0 0 40px var(--neon-pink);
+}
+
+/* 卡片 */
+.neon-card {
+    background: linear-gradient(135deg, rgba(131, 56, 236, 0.2), rgba(58, 134, 255, 0.2));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+}
+
+/* 标题 */
+.neon-title {
+    font-size: 28px;
+    font-weight: 700;
+    background: var(--neon-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 装饰线 */
+.neon-line {
+    height: 3px;
+    background: var(--neon-gradient);
+    border-radius: 2px;
+    box-shadow: 0 0 10px var(--neon-pink);
+}

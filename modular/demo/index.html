@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>佐佑年度报告 - 模块化 Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        h1 {
+            font-size: 48px;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5, #00d2ff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.8;
+            margin-bottom: 40px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(0, 210, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: #00d2ff;
+        }
+
+        .card p {
+            font-size: 14px;
+            opacity: 0.7;
+            line-height: 1.6;
+        }
+
+        .card-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(0, 210, 255, 0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 16px;
+        }
+
+        /* UI 风格展示区域 */
+        .styles-section {
+            margin-top: 60px;
+        }
+
+        .styles-section h2 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .style-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .style-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .style-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .style-item .preview {
+            height: 80px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .style-item .name {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* 赛博朋克风格 */
+        .style-cyber .preview {
+            background: linear-gradient(135deg, #0ff, #f0f);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        /* 霓虹风格 */
+        .style-neon .preview {
+            background: linear-gradient(135deg, #ff006e, #8338ec, #3a86ff);
+        }
+
+        /* 像素风格 */
+        .style-pixel .preview {
+            background: linear-gradient(135deg, #ff69b4, #00ced1);
+            image-rendering: pixelated;
+        }
+
+        /* 水彩风格 */
+        .style-watercolor .preview {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        /* 漫画风格 */
+        .style-comic .preview {
+            background: linear-gradient(135deg, #ffe259, #ffa751);
+        }
+
+        /* 星空风格 */
+        .style-star .preview {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            margin-top: 60px;
+            opacity: 0.5;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>佐佑年度报告系统</h1>
+            <p class="subtitle">模块化版本 - 点击下方模块查看演示</p>
+        </header>
+
+        <!-- 功能模块 -->
+        <section>
+            <h2 style="font-size: 28px; margin-bottom: 20px;">功能模块</h2>
+            <div class="grid">
+                <a href="../components/login.html" class="card" target="_blank">
+                    <div class="card-icon">🚀</div>
+                    <h2>登录界面</h2>
+                    <p>用户登录入口，支持数据导入和初始化</p>
+                    <span class="card-tag">Phase 1</span>
+                </a>
+
+                <a href="../components/ticket.html" class="card" target="_blank">
+                    <div class="card-icon">🎫</div>
+                    <h2>船票界面</h2>
+                    <p>飞船船票样式，展示用户加入时间</p>
+                    <span class="card-tag">Phase 2</span>
+                </a>
+
+                <a href="../components/galaxy.html" class="card" target="_blank">
+                    <div class="card-icon">🌌</div>
+                    <h2>星系展示</h2>
+                    <p>3D 星空背景，点击进入个人报告</p>
+                    <span class="card-tag">Phase 3</span>
+                </a>
+
+                <a href="../components/report.html" class="card" target="_blank">
+                    <div class="card-icon">📊</div>
+                    <h2>个人报告</h2>
+                    <p>网易云风格卡片，展示年度数据</p>
+                    <span class="card-tag">Phase 4</span>
+                </a>
+
+                <a href="../components/firework.html" class="card" target="_blank">
+                    <div class="card-icon">🎆</div>
+                    <h2>烟花页面</h2>
+                    <p>展示难忘的话，烟花动画效果</p>
+                    <span class="card-tag">Special</span>
+                </a>
+
+                <a href="../components/star-map.html" class="card" target="_blank">
+                    <div class="card-icon">✨</div>
+                    <h2>安利星图</h2>
+                    <p>3D 交互式星图，展示想安利的IP</p>
+                    <span class="card-tag">Special</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- UI 风格 -->
+        <section class="styles-section">
+            <h2>部门 UI 风格</h2>
+            <div class="style-grid">
+                <div class="style-item style-cyber">
+                    <div class="preview">🤖</div>
+                    <div class="name">技术部 - 赛博朋克</div>
+                </div>
+                <div class="style-item style-neon">
+                    <div class="preview">🎸</div>
+                    <div class="name">轻音部 - 霓虹风格</div>
+                </div>
+                <div class="style-item style-pixel">
+                    <div class="preview">📸</div>
+                    <div class="name">COS部 - 像素风格</div>
+                </div>
+                <div class="style-item style-watercolor">
+                    <div class="preview">🎨</div>
+                    <div class="name">原创部 - 水彩风格</div>
+                </div>
+                <div class="style-item style-comic">
+                    <div class="preview">📖</div>
+                    <div class="name">外宣部 - 漫画风格</div>
+                </div>
+                <div class="style-item style-star">
+                    <div class="preview">💃</div>
+                    <div class="name">舞装部 - 星空风格</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 部门页面链接 -->
+        <section class="styles-section">
+            <h2>部门专属页面</h2>
+            <div class="grid">
+                <a href="../depts/cos.html" class="card" target="_blank">
+                    <div class="card-icon">📸</div>
+                    <h2>COS部</h2>
+                    <p>粉色像素/拍立得风格</p>
+                </a>
+                <a href="../depts/tech.html" class="card" target="_blank">
+                    <div class="card-icon">🤖</div>
+                    <h2>技术部</h2>
+                    <p>赛博朋克/故障风</p>
+                </a>
+                <a href="../depts/yiqin.html" class="card" target="_blank">
+                    <div class="card-icon">🎸</div>
+                    <h2>轻音部</h2>
+                    <p>音乐跳动/霓虹风</p>
+                </a>
+                <a href="../depts/dance.html" class="card" target="_blank">
+                    <div class="card-icon">💃</div>
+                    <h2>舞装部</h2>
+                    <p>舞台聚光灯风格</p>
+                </a>
+                <a href="../depts/ori.html" class="card" target="_blank">
+                    <div class="card-icon">🎨</div>
+                    <h2>原创部</h2>
+                    <p>水彩画纸风格</p>
+                </a>
+                <a href="../depts/xuanchuan.html" class="card" target="_blank">
+                    <div class="card-icon">📖</div>
+                    <h2>外宣部</h2>
+                    <p>漫画分镜风格</p>
+                </a>
+            </div>
+        </section>
+
+        <footer>
+            <p>佐佑动漫社年度报告系统 | 模块化版本</p>
+            <p>基于 Three.js + Swiper.js</p>
+        </footer>
+    </div>
+</body>
+</html>
