@@ -1,0 +1,25 @@
+[build]
+  publish = "backup"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[functions."*"]
+  timeout = 26
+
+# 将 /health、/api/chat、/api/chat/stream 路由到 Netlify Functions
+[[redirects]]
+  from = "/health"
+  to = "/.netlify/functions/health"
+  status = 200
+
+[[redirects]]
+  from = "/api/chat"
+  to = "/.netlify/functions/chat"
+  status = 200
+
+[[redirects]]
+  from = "/api/chat/stream"
+  to = "/.netlify/functions/chat-stream"
+  status = 200
