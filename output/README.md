@@ -60,9 +60,18 @@ python -m http.server 8081
 
 ### Phase 1：登录
 
+<p align="center">
+  <img src="picture/首页.png" alt="登录页" width="400">
+  <img src="picture/登录船票.png" alt="船票页" width="400">
+</p>
+
 输入社员姓名 → 系统匹配数据库 → 生成专属太空船票（含资历等级、所属部门）→ 激光打孔动画「2025」
 
 ### Phase 2：星系探索
+
+<p align="center">
+  <img src="picture/星系页.png" alt="3D 星系" width="600">
+</p>
 
 飞船跃迁到星系中心，**6 颗部门星球**围绕太阳公转。点击任意星球进入该部门的专属展示页面。
 
@@ -70,14 +79,40 @@ python -m http.server 8081
 
 每个部门使用**独特的视觉风格**渲染：
 
-| 部门 | 主题 | 配色 | 特效 |
-|------|------|------|------|
-| **COS 部** | 像素 Pixel | 粉色 + 青色 | 像素边框、拍立得照片卡 |
-| **技术部** | 赛博朋克 Cyber | 青色 `#00ffff` | Glitch 错误、扫描线 |
-| **轻音部** | 霓虹 Neon | 粉紫蓝渐变 | 音频波形、脉冲动画 |
-| **原创部** | 水彩 Watercolor | 柔和粉紫红 | 模糊边框、画框、纸纹 |
-| **舞蹈部** | 星空 Galaxy | 深蓝紫 | 粒子效果、星云背景 |
-| **外宣部** | 漫画 Comic | 明亮多彩 | 分镜面板、气泡对话框 |
+<table>
+<tr>
+<td align="center"><img src="picture/cos%20intro.png" width="250"><br><b>COS 部</b><br>像素风</td>
+<td align="center"><img src="picture/技术intro.png" width="250"><br><b>技术部</b><br>赛博朋克</td>
+<td align="center"><img src="picture/轻音intro.png" width="250"><br><b>轻音部</b><br>霓虹</td>
+</tr>
+<tr>
+<td align="center"><img src="picture/原创intro.png" width="250"><br><b>原创部</b><br>水彩</td>
+<td align="center"><img src="picture/舞部intro.png" width="250"><br><b>舞蹈部</b><br>星空</td>
+<td align="center"><img src="picture/外宣intro.png" width="250"><br><b>外宣部</b><br>漫画</td>
+</tr>
+</table>
+
+#### 部门内容页
+
+<table>
+<tr>
+<td align="center"><img src="picture/cos内容页.png" width="250"><br>COS 部内容页</td>
+<td align="center"><img src="picture/技术内容页.png" width="250"><br>技术部内容页</td>
+<td align="center"><img src="picture/原创内容页.png" width="250"><br>原创部内容页</td>
+</tr>
+<tr>
+<td align="center"><img src="picture/外宣内容页.png" width="250"><br>外宣内容页</td>
+<td align="center"><img src="picture/轻音内容页1.png" width="250"><br>轻音部内容页</td>
+<td align="center"><img src="picture/轻音内容2.png" width="250"><br>轻音部（含视频）</td>
+</tr>
+</table>
+
+#### 外宣数据看板
+
+<p align="center">
+  <img src="picture/外宣数据页.png" alt="外宣数据看板" width="400">
+  <img src="picture/外宣公众号、B站爬虫页.png" alt="公众号 & B站数据" width="400">
+</p>
 
 外宣部还包含**数据看板**，展示微信公众号阅读量、B 站播放量等运营数据。
 
@@ -85,9 +120,38 @@ python -m http.server 8081
 
 探索完 6 个部门后，太阳核心解锁，进入 **Swiper 滑动卡片式个人报告**（共 17 页）：
 
-1. 用户名称 → 2. 收录总数据 → 3. 个人投稿数 → 4-5. 部门参与 → 6-7. 活跃画像  
-8. 星图数据 → 9. 3D 安利星图 → 10. 弹幕数据 → 11. 弹幕展示 → 12. 回忆数据  
-13. 回忆照片 → 14. 烟花数据 → 15. 烟花祝福 → 16. 报幕页 → 17. 分享海报
+<table>
+<tr>
+<td align="center"><img src="picture/最终1_用户名称页.png" width="200"><br>1. 用户名称</td>
+<td align="center"><img src="picture/最终2_收录总数据页.png" width="200"><br>2. 收录总数据</td>
+<td align="center"><img src="picture/最终3_用户个人投稿数.png" width="200"><br>3. 个人投稿</td>
+</tr>
+<tr>
+<td align="center"><img src="picture/最终4_部门参与信息页1.png" width="200"><br>4. 部门参与①</td>
+<td align="center"><img src="picture/最终5_部门参与信息页2.png" width="200"><br>5. 部门参与②</td>
+<td align="center"><img src="picture/最终6_活跃画像.png" width="200"><br>6. 活跃画像①</td>
+</tr>
+<tr>
+<td align="center"><img src="picture/最终7_活跃画像2.png" width="200"><br>7. 活跃画像②</td>
+<td align="center"><img src="picture/最终8_星图数据页.png" width="200"><br>8. 星图数据</td>
+<td align="center"><img src="picture/最终9_星图页.png" width="200"><br>9. 3D 安利星图</td>
+</tr>
+<tr>
+<td align="center"><img src="picture/最终10_弹幕数据页.png" width="200"><br>10. 弹幕数据</td>
+<td align="center"><img src="picture/最终11_弹幕页.png" width="200"><br>11. 弹幕展示</td>
+<td align="center"><img src="picture/最终12_回忆数据页.png" width="200"><br>12. 回忆数据</td>
+</tr>
+<tr>
+<td align="center"><img src="picture/最终13_回忆页.png" width="200"><br>13. 回忆照片</td>
+<td align="center"><img src="picture/最终14_烟花数据页.png" width="200"><br>14. 烟花数据</td>
+<td align="center"><img src="picture/最终15_烟花祝福页.png" width="200"><br>15. 烟花祝福</td>
+</tr>
+<tr>
+<td align="center"><img src="picture/最终16_报幕页.png" width="200"><br>16. 报幕页</td>
+<td align="center"><img src="picture/最终17_分享页.png" width="200"><br>17. 分享海报</td>
+<td></td>
+</tr>
+</table>
 
 ---
 
@@ -184,14 +248,6 @@ python -m http.server 8081
 ## 🤝 贡献
 
 本项目由**佐佑动漫社外宣部**维护。
-
----
-
-<p align="center">
-  <em>🌠 愿每一位社员都能在星际旅途中找到属于自己的光芒</em><br>
-  <strong>佐佑动漫社 · 2025</strong>
-</p>
-
 
 ---
 
