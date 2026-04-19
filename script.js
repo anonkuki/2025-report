@@ -4148,8 +4148,9 @@ window.closeLightbox = closeLightbox;
     // ── 配置 ─────────────────────────────────────────────────
 
     var LOCAL_PROXY_ORIGIN = 'http://localhost:8787';
+    var NETLIFY_ORIGIN = 'https://zymds2025.netlify.app';
     var isLocalPreview = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-    var PROXY_URL = isLocalPreview ? LOCAL_PROXY_ORIGIN : '';
+    var PROXY_URL = isLocalPreview ? LOCAL_PROXY_ORIGIN : NETLIFY_ORIGIN;
     var MASCOT_NAME = '小佑';
     var ASSET_BASE = './assets/';
     var EMOTIONS = ['Normal', 'Happy', 'Surprised', 'Thinking', 'Sad'];
