@@ -1,0 +1,31 @@
+# Python 字节码
+__pycache__/
+*.pyc
+*.pyo
+
+# 本地 Python 后端服务（包含历史密钥，已被 Netlify Functions 替代）
+backup/server/
+new/server/
+new1/server/
+
+# 旧版本目录（仅保留 backup）
+new/
+new1/
+
+# 环境变量文件（若本地开发时使用）
+.env
+.env.local
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# Local Netlify folder
+.netlify
+
+# Local environments and source data (not part of the published report)
+.venv/
+~$*
+347270601_*.xlsx
+/作者/
+/合照/

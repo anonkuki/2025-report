@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>一份属于每位社员的交互式太空旅程年度报告</strong><br>
-  <a href="https://zymds2025.netlify.app/">🚀 在线体验</a> · 
+  <a href="https://zymds2025.netlify.app/">🚀 在线体验</a> ·
   <a href="https://b23.tv/cxfZxTe">🎬 演示视频</a>
 </p>
 
@@ -22,37 +22,13 @@
 - 🌍 **Three.js 3D 星系** — 6 颗程序化纹理星球、飞船航行、流星雨
 - 🎨 **6 种部门专属视觉** — 像素 / 赛博朋克 / 霓虹 / 水彩 / 漫画 / 星空
 - 📊 **个人数据报告** — 15+ 页 Swiper 卡片，涵盖投稿、活跃度、回忆
-- 🤖 **AI 助手「小佑」** — 深邃星空风格，基于 MiniMax-M2.7，支持流式回复
+- 📴 **问答 Agent 已关闭** — 页面不再展示问答看板娘，也不会请求外部 AI 服务
 
 ---
 
-## 🤖 AI 助手「小佑」
+## 📴 问答 Agent 状态
 
-浮动于页面左下角的看板娘助手，帮助社员查询信息、了解活动。
-
-### 设计风格：深邃星空 2.0
-
-- 面板：深海军蓝多层渐变背景 + 三层 box-shadow 蓝光晕呼吸动画
-- 星空层：60 颗三色（白 / 青 / 紫）闪烁星 + 5 条青白流星 + 3 团星云
-- 头部：极光扫光动画 + 青→薰衣草→紫渐变标题
-- 按钮：双环旋转吉祥物光晕
-
-### 技术实现
-
-| 端 | 方案 |
-|----|------|
-| **生产（Netlify）** | Netlify Functions (`/api/chat/stream`) 代理 MiniMax API，API Key 存于环境变量 |
-| **本地开发** | `local-ai-proxy.js`（纯 Node.js，无依赖，端口 8787） |
-
-本地启动命令：
-```bash
-# 终端 1：AI 代理
-$env:MINIMAX_API_KEY="<your_key>" ; node local-ai-proxy.js
-
-# 终端 2：静态服务
-python -m http.server 8081
-# 浏览器访问 http://localhost:8081
-```
+问答 Agent 已关闭。发布页面不会创建问答组件、不会发起模型请求，仓库也不再发布本地或 Netlify 问答服务入口。
 
 ---
 
@@ -164,8 +140,6 @@ python -m http.server 8081
 | **Swiper** | 11 | 个人报告卡片滑动 |
 | **html2canvas** | 1.4.1 | 海报截图导出 |
 | **Animate.css** | 4.1.1 | CSS 动画预设 |
-| **MiniMax-M2.7** | — | AI 助手「小佑」语言模型 |
-| **Netlify Functions** | Node.js | 无服务器 AI 代理（生产） |
 
 ### 架构总览
 
@@ -181,9 +155,6 @@ python -m http.server 8081
 │  ┌──────────────────────────────────────────────────────┐│
 │  │         Three.js 3D 引擎 + 粒子系统                   ││
 │  └──────────────────────────────────────────────────────┘│
-│  ┌────────────────────────────────────────────────────┐  │
-│  │  AI 助手「小佑」(Netlify Functions / 本地代理)       │  │
-│  └────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -224,17 +195,14 @@ output/                         # 🚀 部署根目录（Netlify 直接托管此
 
 直接访问：**https://zymds2025.netlify.app/**
 
-### 本地运行（含 AI 助手）
+### 本地运行
 
 ```bash
 # 克隆仓库
 git clone https://github.com/anonkuki/Zuoyou-Anime-Club-2025-Annual-Summary.git
 cd Zuoyou-Anime-Club-2025-Annual-Summary
 
-# 启动 AI 代理（需要 Node.js，无需 npm install）
-$env:MINIMAX_API_KEY="your_api_key" ; node local-ai-proxy.js
-
-# 另开终端启动静态服务
+# 启动静态服务
 python -m http.server 8081
 
 # 浏览器访问

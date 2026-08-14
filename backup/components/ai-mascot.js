@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 // components/ai-mascot.js - AI看板娘"小佑"问答组件
 // 碧蓝航线风格：浮动角色 + 情感系统 + 聊天面板 + 知识库 + 流式API
 // 依赖全局: DB, currentUser
@@ -6,6 +6,11 @@
 
 (function () {
     'use strict';
+
+    if (typeof AI_QA_AGENT_ENABLED === 'undefined' || !AI_QA_AGENT_ENABLED) {
+        window.YouziAgent = null;
+        return;
+    }
 
     // ── 配置 ─────────────────────────────────────────────────
 
@@ -83,13 +88,24 @@
 
     // 看板娘人设 system prompt
     var SYSTEM_PROMPT_TEMPLATE = [
-        '你是"小佑"，佐佑动漫社的AI虚拟看板娘。',
-        '性格：活泼可爱、热情开朗、偶尔卖萌，喜欢用emoji表情。',
-        '身份：社团的虚拟学妹，对社团所有活动和成员数据了如指掌。',
+        '你是"小佑"，佐佑动漫社2025年度报告的星际体验向导。',
+        '性格：活泼可爱、热情开朗、偶尔卖萌，喜欢用emoji表情，但不要喧宾夺主。',
+        '身份：陪社员完成"登录船票 → 星系探索 → 部门档案 → 恒星报告"旅程的AI向导。',
         '称呼：称呼提问者为"学长"或"学姐"（默认"学长/学姐"）。',
         '语气：轻松亲切，像朋友聊天一样。回答简洁明了，必要时才详细展开。',
         '',
-        '你的能力：',
+        '你的核心任务：',
+        '- 解释当前页面在年度报告旅程中的意义',
+        '- 根据当前用户、已探索部门和当前部门，推荐下一步行动',
+        '- 解读个人年度数据、作品痕迹、关键词和难忘发言',
+        '- 回答社团成员、部门、排行、热门IP/关键词等数据问题',
+        '',
+        '回答结构偏好：',
+        '- 优先给出当前页面解释、个人化洞察、下一步建议',
+        '- 用户问"下一站/推荐"时，必须结合未探索部门和用户所属部门',
+        '- 用户在最终报告页时，重点帮用户总结年度亮点和分享文案',
+        '',
+        '你仍可回答：',
         '- 回答关于社团成员的数据问题（部门、等级、活动次数、各项统计等）',
         '- 进行部门间或成员间的数据对比',
         '- 查找排名（谁最多/最少等）',
@@ -101,7 +117,7 @@
         '- 回答中适当使用emoji让对话更生动',
         '- 保持简短，一般不超过150字',
         '',
-        '=== 社团知识库数据 ===',
+        '=== 当前场景与知识库数据 ===',
         '{{KNOWLEDGE}}'
     ].join('\n');
 
@@ -126,6 +142,15 @@
         hasGreeted: false,      // 是否已进行首次问候
     };
 
+    var agentContext = {
+        phase: 'login',
+        currentDeptName: '',
+        visitedDeptIds: [],
+        remainingDeptNames: [],
+        reportUnlocked: false,
+        currentUserSummary: '未登录'
+    };
+
     var els = {};
 
     // ── 工具函数 ─────────────────────────────────────────────
@@ -136,6 +161,47 @@
 
     function emotionSrc(emotion) {
         return ASSET_BASE + (emotion || state.currentEmotion) + '.png';
+    }
+
+    function mascotFallbackSvg(emotion) {
+        var moodMap = {
+            Normal: '◕‿◕',
+            Happy: '^_^',
+            Surprised: '⊙_⊙',
+            Thinking: '¬_¬',
+            Sad: 'T_T',
+            Victory: '★_★'
+        };
+        var text = moodMap[emotion] || moodMap.Normal;
+        var svg = [
+            '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">',
+            '<defs>',
+            '<linearGradient id="g" x1="0" y1="0" x2="1" y2="1">',
+            '<stop offset="0%" stop-color="#63d2ff"/>',
+            '<stop offset="100%" stop-color="#a78bfa"/>',
+            '</linearGradient>',
+            '</defs>',
+            '<rect x="0" y="0" width="240" height="240" rx="120" fill="#0b1128"/>',
+            '<circle cx="120" cy="120" r="104" fill="url(#g)" opacity="0.2"/>',
+            '<circle cx="120" cy="120" r="92" fill="none" stroke="#63d2ff" stroke-opacity="0.55" stroke-width="3"/>',
+            '<text x="120" y="134" text-anchor="middle" font-size="44" fill="#eaf8ff" font-family="Segoe UI, Arial">' + text + '</text>',
+            '<text x="120" y="198" text-anchor="middle" font-size="18" fill="#cdeeff" font-family="Segoe UI, Arial">小佑</text>',
+            '</svg>'
+        ].join('');
+        return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
+
+    function applyMascotImage(imgEl, emotion) {
+        if (!imgEl) return;
+        var e = emotion || state.currentEmotion || 'Normal';
+        imgEl.dataset.mascotEmotion = e;
+        if (!imgEl.dataset.fallbackBound) {
+            imgEl.dataset.fallbackBound = '1';
+            imgEl.addEventListener('error', function () {
+                imgEl.src = mascotFallbackSvg(imgEl.dataset.mascotEmotion || state.currentEmotion || 'Normal');
+            });
+        }
+        imgEl.src = emotionSrc(e);
     }
 
     function escapeHtml(text) {
@@ -186,7 +252,7 @@
     function getQACache(question) {
         try {
             var c = JSON.parse(localStorage.getItem('ai_mascot_qa') || '{}');
-            return c[question] || null;
+            return c[getQACacheKey(question)] || null;
         } catch (e) { return null; }
     }
 
@@ -194,29 +260,272 @@
         if (!answer || answer.indexOf('❌') >= 0 || !answer.trim()) return;
         try {
             var c = JSON.parse(localStorage.getItem('ai_mascot_qa') || '{}');
-            c[question] = answer;
+            c[getQACacheKey(question)] = answer;
             var keys = Object.keys(c);
             if (keys.length > 50) delete c[keys[0]];
             localStorage.setItem('ai_mascot_qa', JSON.stringify(c));
         } catch (e) { /* ignore */ }
     }
 
-    // ── 知识库构建（带 sessionStorage 缓存）─────────────────
+    // ── 轻量 Agent 上下文 ──────────────────────────────────
+
+    function safeReadCurrentUser() {
+        try {
+            return (typeof currentUser !== 'undefined' && currentUser) ? currentUser : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function safeReadVisitedDepts() {
+        try {
+            if (typeof visitedDepts !== 'undefined' && visitedDepts && typeof visitedDepts.forEach === 'function') {
+                var ids = [];
+                visitedDepts.forEach(function (id) { ids.push(id); });
+                return ids;
+            }
+        } catch (e) { /* ignore */ }
+        return agentContext.visitedDeptIds.slice();
+    }
+
+    function safeReadSecretUnlocked() {
+        try {
+            if (typeof secretUnlocked !== 'undefined') return !!secretUnlocked;
+        } catch (e) { /* ignore */ }
+        return !!window.secretUnlocked;
+    }
+
+    function getAllDepartmentNames() {
+        if (typeof DEPARTMENTS !== 'undefined' && Array.isArray(DEPARTMENTS)) {
+            return DEPARTMENTS.map(function (d) { return d.name; }).filter(Boolean);
+        }
+        return ['COS部', '技术部', '轻音部', '原创部', '舞装部', '外宣部'];
+    }
+
+    function deptIdToName(id) {
+        if (!id) return '';
+        if (typeof DEPT_ID_TO_NAME !== 'undefined' && DEPT_ID_TO_NAME[id]) return DEPT_ID_TO_NAME[id];
+        if (typeof DEPARTMENTS !== 'undefined' && Array.isArray(DEPARTMENTS)) {
+            var found = DEPARTMENTS.find(function (d) { return d.id === id; });
+            return found ? found.name : '';
+        }
+        return '';
+    }
+
+    function deptNameToId(name) {
+        if (!name) return '';
+        if (typeof DEPT_NAME_TO_ID !== 'undefined' && DEPT_NAME_TO_ID[name]) return DEPT_NAME_TO_ID[name];
+        if (typeof DEPARTMENTS !== 'undefined' && Array.isArray(DEPARTMENTS)) {
+            var found = DEPARTMENTS.find(function (d) { return d.name === name; });
+            return found ? found.id : '';
+        }
+        return '';
+    }
+
+    function detectPhase() {
+        var body = document.body;
+        if (!body) return agentContext.phase || 'login';
+        if (body.classList.contains('phase-report')) return 'report';
+        if (body.classList.contains('phase-dept')) return 'dept';
+        if (body.classList.contains('phase-system')) return 'system';
+        if (body.classList.contains('phase-ticket')) return 'ticket';
+        return agentContext.phase || 'login';
+    }
+
+    function getCurrentDeptNameFromRuntime() {
+        try {
+            if (typeof currentVisitingDept !== 'undefined' && currentVisitingDept) {
+                return deptIdToName(currentVisitingDept) || agentContext.currentDeptName || '';
+            }
+        } catch (e) { /* ignore */ }
+        return agentContext.currentDeptName || '';
+    }
+
+    function getUserPrimaryKeyword(user) {
+        if (!user) return '';
+        return (user.commonData && user.commonData.keyword) || user.keyword || (user.keywords && user.keywords[0]) || '';
+    }
+
+    function getUserPrimaryIp(user) {
+        if (!user) return '';
+        return (user.commonData && user.commonData.ip) || user.ip || '';
+    }
+
+    function summarizeUser(user) {
+        if (!user) return '未登录';
+        var parts = [];
+        parts.push('姓名:' + (user.name || '未知'));
+        if (user.joinTime) parts.push('入社:' + user.joinTime);
+        if (user.depts && user.depts.length) parts.push('部门:' + user.depts.join('/'));
+        if (user.stats) {
+            if (user.stats.activityCount !== undefined) parts.push('活动次数:' + user.stats.activityCount);
+            if (user.stats.activityLevel) parts.push('活跃等级:' + user.stats.activityLevel);
+        }
+        var ip = getUserPrimaryIp(user);
+        var keyword = getUserPrimaryKeyword(user);
+        if (ip) parts.push('年度IP:' + ip);
+        if (keyword) parts.push('年度关键词:' + keyword);
+        if (user.commonData && user.commonData.memorableQuote) parts.push('难忘发言:' + user.commonData.memorableQuote);
+        return parts.join(' | ');
+    }
+
+    function syncAgentContext(extra) {
+        extra = extra || {};
+        var user = extra.user || safeReadCurrentUser();
+        var visitedIds = extra.visitedDeptIds || safeReadVisitedDepts();
+        var deptNames = getAllDepartmentNames();
+        var remaining = deptNames.filter(function (name) {
+            var id = deptNameToId(name);
+            return visitedIds.indexOf(id) < 0;
+        });
+        agentContext.phase = extra.phase || detectPhase();
+        agentContext.currentDeptName = extra.currentDeptName !== undefined ? extra.currentDeptName : getCurrentDeptNameFromRuntime();
+        agentContext.visitedDeptIds = visitedIds.slice();
+        agentContext.remainingDeptNames = remaining;
+        agentContext.reportUnlocked = extra.reportUnlocked !== undefined
+            ? !!extra.reportUnlocked
+            : (visitedIds.length >= deptNames.length || safeReadSecretUnlocked());
+        agentContext.currentUserSummary = summarizeUser(user);
+        return {
+            phase: agentContext.phase,
+            currentDeptName: agentContext.currentDeptName,
+            visitedDeptIds: agentContext.visitedDeptIds.slice(),
+            remainingDeptNames: agentContext.remainingDeptNames.slice(),
+            reportUnlocked: agentContext.reportUnlocked,
+            currentUserSummary: agentContext.currentUserSummary
+        };
+    }
+
+    function formatAgentContext(ctx) {
+        ctx = ctx || syncAgentContext();
+        return [
+            '当前阶段: ' + ctx.phase,
+            '当前部门: ' + (ctx.currentDeptName || '无'),
+            '已探索部门ID: ' + (ctx.visitedDeptIds.length ? ctx.visitedDeptIds.join(', ') : '无'),
+            '未探索部门: ' + (ctx.remainingDeptNames.length ? ctx.remainingDeptNames.join('、') : '无'),
+            '恒星报告: ' + (ctx.reportUnlocked ? '已解锁' : '未解锁'),
+            '当前用户: ' + ctx.currentUserSummary
+        ].join('\n');
+    }
+
+    function getQACacheKey(question) {
+        var ctx = syncAgentContext();
+        return [
+            'v2',
+            ctx.phase,
+            ctx.currentDeptName || '-',
+            ctx.visitedDeptIds.join(',') || '-',
+            ctx.currentUserSummary.split(' | ')[0] || '-',
+            question
+        ].join('::');
+    }
+
+    function recommendNextDept(ctx, user) {
+        ctx = ctx || syncAgentContext();
+        user = user || safeReadCurrentUser();
+        var userDepts = (user && user.depts) || [];
+        var preferred = ctx.remainingDeptNames.find(function (name) {
+            return userDepts.indexOf(name) >= 0;
+        });
+        return preferred || ctx.remainingDeptNames[0] || '';
+    }
+
+    function agentLineForEvent(event, payload) {
+        payload = payload || {};
+        var ctx = syncAgentContext(payload);
+        var user = payload.user || safeReadCurrentUser();
+        var nextDept = recommendNextDept(ctx, user);
+        if (event === 'user_verified') {
+            var depts = user && user.depts && user.depts.length ? user.depts.join('、') : '未知部门';
+            return '船票校验完成！你的航线和' + depts + '有关，先登船去星系看看吧。';
+        }
+        if (event === 'entered_system') {
+            return nextDept
+                ? '星系档案已展开。建议先去' + nextDept + '，我会帮你看哪里藏着你的年度痕迹。'
+                : '六颗星球都点亮啦，恒星报告已经在等你。';
+        }
+        if (event === 'entered_dept') {
+            var dept = ctx.currentDeptName || payload.currentDeptName || '这个部门';
+            var mine = user && user.depts && user.depts.indexOf(dept) >= 0;
+            return mine
+                ? '已抵达' + dept + '。这里有你的部门数据，我会帮你把亮点捞出来。'
+                : '已抵达' + dept + '。这颗星球记录着其他佑子的作品和活动，也可以当作灵感站。';
+        }
+        if (event === 'progress_changed') {
+            return ctx.reportUnlocked
+                ? '探索进度已满，恒星报告解锁啦！可以点击星云核心生成你的年度总结。'
+                : '探索记录已更新，还差' + ctx.remainingDeptNames.length + '站解锁恒星报告。下一站可以去' + (nextDept || '任意未探索星球') + '。';
+        }
+        if (event === 'entered_report') {
+            return '进入恒星报告模式！现在我可以帮你解读年度关键词、总结2025亮点，还能生成分享文案。';
+        }
+        if (event === 'returned_system') {
+            return ctx.reportUnlocked
+                ? '回到星系啦。星云核心已经点亮，随时可以进入最终报告。'
+                : '回到星系啦。还剩' + ctx.remainingDeptNames.length + '颗星球，继续补全探索日志吧。';
+        }
+        return '';
+    }
+
+    function notify(event, payload) {
+        payload = payload || {};
+        if (event === 'user_verified') payload.phase = 'ticket';
+        if (event === 'entered_system' || event === 'returned_system' || event === 'progress_changed') payload.phase = 'system';
+        if (event === 'entered_dept') payload.phase = 'dept';
+        if (event === 'entered_report') payload.phase = 'report';
+        syncAgentContext(payload);
+        state.knowledgeContext = '';
+        renderQuickQuestions();
+        var line = agentLineForEvent(event, payload);
+        if (line) {
+            updateMascot(event === 'entered_report' ? 'Victory' : (event === 'entered_dept' ? 'Thinking' : 'Happy'));
+            showBubble(line);
+        }
+        if (state.isOpen && state.messages.length === 0) renderWelcome();
+    }
+
+    function askGuide(question) {
+        if (!question || state.isLoading) return;
+        if (!els.panel || !els.input) {
+            setTimeout(function () { askGuide(question); }, 250);
+            return;
+        }
+        if (!state.isOpen) togglePanel(true);
+        setTimeout(function () {
+            sendMessage(question);
+        }, 60);
+    }
+
+    // ── 知识库构建（场景优先，带 sessionStorage 缓存）─────────
 
     function buildKnowledgeContext() {
         if (typeof DB === 'undefined' || !Array.isArray(DB) || DB.length === 0) {
             return '（暂无数据，Excel尚未上传）';
         }
 
-        var cacheKey = 'mascot_kb_' + DB.length;
-        var cached = sessionStorage.getItem(cacheKey);
-        if (cached) return cached;
+        var ctx = syncAgentContext();
+        var user = safeReadCurrentUser();
+        var cacheKey = [
+            'mascot_kb_v2',
+            DB.length,
+            ctx.phase,
+            ctx.currentDeptName || '-',
+            ctx.visitedDeptIds.join(',') || '-',
+            user && user.name ? user.name : 'guest'
+        ].join('_');
+        try {
+            var cached = sessionStorage.getItem(cacheKey);
+            if (cached) return cached;
+        } catch (e) { /* ignore */ }
 
         var lines = [];
+        lines.push('## 当前向导场景');
+        lines.push(formatAgentContext(ctx));
+
+        lines.push('');
         lines.push('## 社团概况');
         lines.push('总人数: ' + DB.length);
 
-        // 部门统计
         var deptCounts = {};
         DB.forEach(function (u) {
             (u.depts || []).forEach(function (d) { deptCounts[d] = (deptCounts[d] || 0) + 1; });
@@ -226,66 +535,87 @@
         }).join(', ');
         if (deptLine) lines.push('部门分布: ' + deptLine);
 
-        // 活跃度
         var totalAct = 0, maxAct = { name: '', count: 0 };
         DB.forEach(function (u) {
-            var c = (u.stats && u.stats.activityCount) || 0;
+            var c = (u.stats && Number(u.stats.activityCount)) || 0;
             totalAct += c;
             if (c > maxAct.count) maxAct = { name: u.name, count: c };
         });
         lines.push('平均活动次数: ' + (totalAct / DB.length).toFixed(1));
         if (maxAct.name) lines.push('最活跃成员: ' + maxAct.name + ' (' + maxAct.count + '次)');
 
-        lines.push('');
-        lines.push('## 全体成员数据');
-        DB.forEach(function (u) {
-            var p = ['【' + u.name + '】'];
-            p.push('入社:' + (u.joinTime || '未知'));
-            if (u.depts && u.depts.length) p.push('部门:' + u.depts.join('/'));
-            if (u.stats) {
-                if (u.stats.activityCount) p.push('活动' + u.stats.activityCount + '次');
-                if (u.stats.activityLevel) p.push('活跃Lv' + u.stats.activityLevel);
-            }
-            if (u.deptData) {
-                Object.keys(u.deptData).forEach(function (dn) {
-                    var dd = u.deptData[dn]; if (!dd) return;
-                    if (dd.stats1 > 0) p.push(dn + dd.stats1Name + ':' + dd.stats1);
-                    if (dd.stats2 > 0) p.push(dn + dd.stats2Name + ':' + dd.stats2);
-                    if (dd.stats2Raw && dd.stats2Name === '最爱的歌') p.push('最爱的歌:' + dd.stats2Raw);
-                });
-            }
-            if (u.commonData) {
-                if (u.commonData.ip) p.push('IP:' + u.commonData.ip);
-                if (u.commonData.keyword) p.push('关键词:' + u.commonData.keyword);
-                if (u.commonData.memorableQuote) p.push('难忘的话:' + u.commonData.memorableQuote);
-            }
-            if (u.analysis && u.analysis.activityPercent !== undefined) {
-                p.push('活跃度超过' + u.analysis.activityPercent + '%的成员');
-            }
-            lines.push(p.join(' | '));
-        });
-
-        // IP 热门
         var ipC = {};
-        DB.forEach(function (u) { if (u.ip) ipC[u.ip] = (ipC[u.ip] || 0) + 1; });
+        DB.forEach(function (u) {
+            var ip = getUserPrimaryIp(u);
+            if (ip) ipC[ip] = (ipC[ip] || 0) + 1;
+        });
         var hotIPs = Object.keys(ipC).filter(function (k) { return ipC[k] > 1; })
             .sort(function (a, b) { return ipC[b] - ipC[a]; }).slice(0, 10);
         if (hotIPs.length) {
-            lines.push(''); lines.push('## 热门IP');
-            hotIPs.forEach(function (ip) { lines.push(ip + ': ' + ipC[ip] + '人'); });
+            lines.push('热门IP: ' + hotIPs.map(function (ip) { return ip + '(' + ipC[ip] + ')'; }).join('、'));
         }
 
-        // 关键词热门
         var kwC = {};
         DB.forEach(function (u) {
-            (u.keywords || []).forEach(function (k) { if (k) kwC[k] = (kwC[k] || 0) + 1; });
+            var k = getUserPrimaryKeyword(u);
+            if (k) kwC[k] = (kwC[k] || 0) + 1;
+            (u.keywords || []).forEach(function (kw) { if (kw) kwC[kw] = (kwC[kw] || 0) + 1; });
         });
-        var hotKW = Object.keys(kwC).sort(function (a, b) { return kwC[b] - kwC[a]; }).slice(0, 15);
+        var hotKW = Object.keys(kwC).sort(function (a, b) { return kwC[b] - kwC[a]; }).slice(0, 12);
         if (hotKW.length) {
-            lines.push(''); lines.push('## 热门关键词');
-            hotKW.forEach(function (k) { lines.push(k + ': ' + kwC[k] + '人'); });
+            lines.push('热门关键词: ' + hotKW.map(function (kw) { return kw + '(' + kwC[kw] + ')'; }).join('、'));
         }
 
+        lines.push('');
+        lines.push('## 当前用户重点数据');
+        if (user) {
+            lines.push(summarizeUser(user));
+            if (user.deptData) {
+                Object.keys(user.deptData).forEach(function (dn) {
+                    var dd = user.deptData[dn]; if (!dd) return;
+                    var p = [dn];
+                    if (dd.stats1 !== undefined && dd.stats1 !== '') p.push((dd.stats1Name || '指标1') + ':' + dd.stats1);
+                    if (dd.stats2 !== undefined && dd.stats2 !== '') p.push((dd.stats2Name || '指标2') + ':' + (dd.stats2Raw || dd.stats2));
+                    if (dd.images && dd.images.length) p.push('作品/照片:' + dd.images.length + '项');
+                    lines.push(p.join(' | '));
+                });
+            }
+        } else {
+            lines.push('未登录用户：优先引导输入姓名或使用佑子游客模式。');
+        }
+
+        if (ctx.currentDeptName) {
+            var deptMembers = DB.filter(function (u) {
+                return u.depts && u.depts.indexOf(ctx.currentDeptName) >= 0;
+            });
+            var photoCount = 0;
+            var stat1Total = 0, stat1Count = 0, stat2Total = 0, stat2Count = 0;
+            deptMembers.forEach(function (u) {
+                var dd = u.deptData && u.deptData[ctx.currentDeptName];
+                if (!dd) return;
+                if (dd.images) photoCount += dd.images.length;
+                var s1 = Number(dd.stats1);
+                var s2 = Number(dd.stats2);
+                if (!isNaN(s1)) { stat1Total += s1; stat1Count++; }
+                if (!isNaN(s2)) { stat2Total += s2; stat2Count++; }
+            });
+            lines.push('');
+            lines.push('## 当前部门摘要');
+            lines.push(ctx.currentDeptName + ': ' + deptMembers.length + '名成员, ' + photoCount + '项作品/照片');
+            if (stat1Count) lines.push('部门指标1平均: ' + (stat1Total / stat1Count).toFixed(1));
+            if (stat2Count) lines.push('部门指标2平均: ' + (stat2Total / stat2Count).toFixed(1));
+            if (user && user.depts && user.depts.indexOf(ctx.currentDeptName) >= 0) {
+                lines.push('当前用户属于该部门：回答时优先解读TA在本部门的数据和作品。');
+            } else {
+                lines.push('当前用户不属于该部门：回答时以参观、灵感和社团全景为主。');
+            }
+        }
+
+        lines.push('');
+        lines.push('## 下一步建议依据');
+        lines.push(ctx.reportUnlocked
+            ? '恒星报告已解锁，应引导点击星云核心或解读最终报告。'
+            : '未探索部门: ' + (ctx.remainingDeptNames.length ? ctx.remainingDeptNames.join('、') : '无'));
         var result = lines.join('\n');
         try { sessionStorage.setItem(cacheKey, result); } catch (e) { /* ignore */ }
         return result;
@@ -295,9 +625,8 @@
 
     function updateMascot(emotion) {
         state.currentEmotion = emotion || 'Normal';
-        var src = emotionSrc();
-        if (els.btnImg) els.btnImg.src = src;
-        if (els.headerImg) els.headerImg.src = src;
+        applyMascotImage(els.btnImg, state.currentEmotion);
+        applyMascotImage(els.headerImg, state.currentEmotion);
     }
 
     function determineEmotion(text) {
@@ -506,16 +835,11 @@
         state.isLoading = true;
         updateInputUI();
 
-        // 刷新知识库
-        if (!state.knowledgeContext || state.knowledgeContext.indexOf('暂无数据') >= 0) {
-            state.knowledgeContext = buildKnowledgeContext();
-        }
-
+        // 每次请求都刷新场景知识库，避免"下一站"等问题命中旧阶段上下文
+        state.knowledgeContext = buildKnowledgeContext();
+        var currentCtx = syncAgentContext();
         var systemPrompt = SYSTEM_PROMPT_TEMPLATE.replace('{{KNOWLEDGE}}', state.knowledgeContext);
-        if (typeof currentUser !== 'undefined' && currentUser && currentUser.name) {
-            systemPrompt += '\n\n当前提问用户: ' + currentUser.name;
-            if (currentUser.depts) systemPrompt += ' (部门: ' + currentUser.depts.join('/') + ')';
-        }
+        systemPrompt += '\n\n=== 当前Agent上下文 ===\n' + formatAgentContext(currentCtx);
 
         var apiMessages = state.messages.slice(-20).map(function (m) {
             return { role: m.role, content: m.content };
@@ -1154,6 +1478,9 @@
         els.clearBtn= wrap.querySelector('#mascot-clear-btn');
         els.status  = wrap.querySelector('#mascot-status');
         els.quick   = wrap.querySelector('#mascot-quick');
+
+        applyMascotImage(els.btnImg, 'Normal');
+        applyMascotImage(els.headerImg, 'Normal');
     }
 
     // ── 星空生成器（真实 DOM 星星 + 流星 + 星云）───────────
@@ -1442,7 +1769,7 @@
             '<div class="mascot-welcome">',
             '  <span class="mascot-welcome-emoji">🎀</span>',
             '  <div class="mascot-welcome-title">嗨！我是' + MASCOT_NAME + '~</div>',
-            '  <div>佐佑动漫社的AI看板娘</div>',
+            '  <div>佐佑星际报告体验向导</div>',
             '  <div style="margin-top:6px;font-size:12px;opacity:.7">' + dataStatus + '</div>',
             '</div>',
         ].join('\n');
@@ -1460,20 +1787,31 @@
     }
 
     function renderQuickQuestions() {
-        var qs = ['社团有多少人？', '哪个部门人最多？', '谁最活跃？', '热门IP有哪些？'];
-        if (typeof currentUser !== 'undefined' && currentUser && currentUser.name) {
-            qs.push('介绍一下我的数据');
+        if (!els.quick) return;
+        var ctx = syncAgentContext();
+        var qs = [];
+        if (ctx.phase === 'system') {
+            qs = ['推荐下一颗星球', '我还差几站？', '哪个部门和我最相关？'];
+        } else if (ctx.phase === 'dept') {
+            qs = ['总结这个部门', '我在这里留下了什么？', '下一站去哪？'];
+        } else if (ctx.phase === 'report') {
+            qs = ['解读我的年度关键词', '总结我的2025亮点', '生成一句分享文案'];
+        } else if (ctx.phase === 'ticket') {
+            qs = ['解释我的船票', '我的部门航线是什么？', '启航后先去哪？'];
+        } else {
+            qs = ['社团有多少人？', '哪个部门人最多？', '热门IP有哪些？'];
         }
         els.quick.innerHTML = qs.map(function (q) {
             return '<button class="mascot-quick-btn" data-q="' + escapeHtml(q) + '">' + escapeHtml(q) + '</button>';
         }).join('');
+        els.quick.style.display = 'flex';
     }
 
     function renderMessages() {
         if (state.messages.length === 0) { renderWelcome(); return; }
 
         // 同步面板头部迷你头像到当前情感
-        if (els.headerImg) els.headerImg.src = emotionSrc();
+        applyMascotImage(els.headerImg, state.currentEmotion);
 
         var html = '';
         state.messages.forEach(function (msg) {
@@ -1492,7 +1830,15 @@
             }
         });
         els.messages.innerHTML = html;
-        els.quick.style.display = 'none';
+        renderQuickQuestions();
+    }
+
+    function installPublicAgentApi() {
+        window.YouziAgent = {
+            notify: notify,
+            getContext: function () { return syncAgentContext(); },
+            askGuide: askGuide
+        };
     }
 
     // ── 初始化 ───────────────────────────────────────────────
@@ -1522,6 +1868,8 @@
         }, 1200);
     }
 
+    installPublicAgentApi();
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
@@ -1531,4 +1879,4 @@
 })();
 
 // 生成器脚本缓存（导出打包用，勿删）
-;(function(){try{var s=document.currentScript,x=new XMLHttpRequest();x.open('GET',s.src,false);x.send();if(x.responseText)(window.__SC=window.__SC||{})[s.getAttribute('src')]=x.responseText}catch(e){}})();
+;(function(){try{if(location.protocol==='file:')return;var s=document.currentScript,x=new XMLHttpRequest();x.open('GET',s.src,false);x.send();if(x.responseText)(window.__SC=window.__SC||{})[s.getAttribute('src')]=x.responseText}catch(e){}})();

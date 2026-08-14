@@ -2,6 +2,9 @@
 // generator-config.js - 生成器配置常量 + 产品数据配置
 // ============================================================
 
+// QA Agent is disabled by default in the published report.
+const AI_QA_AGENT_ENABLED = false;
+
 const SENIORITY_MAP = {
     '1': '小登 (2025/2026)',
     '2': '中登 (2022-2024)',
@@ -143,11 +146,11 @@ const GENERATOR_STATE = {
 };
 
 const CONFIG = {
-    starCount: 3500, 
-    brightStarCount: 1200, 
+    starCount: 3500,
+    brightStarCount: 1200,
     dustCount: 600,
     tinyStarCount: 2000,
-    orbitRadius: 45, 
+    orbitRadius: 45,
     orbitSpeed: 0.08,
 };
 
@@ -239,9 +242,9 @@ function calculateDeptAverage(deptName, members) {
             count++;
         }
     });
-    return { 
-        stats1: count > 0 ? total1/count : 0, 
-        stats2: count > 0 ? total2/count : 0 
+    return {
+        stats1: count > 0 ? total1/count : 0,
+        stats2: count > 0 ? total2/count : 0
     };
 }
 
@@ -271,7 +274,7 @@ function savePosterImage() {
     // 临时让所有动画元素可见
     const animEls = card.querySelectorAll('[style*="animation"], .ending-header, .message, .ending-poster, .ending-bottom-bar, .poster-watermark');
     animEls.forEach(el => { el.dataset.origOpacity = el.style.opacity; el.style.opacity = '1'; });
-    
+
     if (typeof html2canvas === 'undefined') {
         alert('html2canvas 未加载，请检查网络连接');
         if (btn) btn.style.display = '';
@@ -323,7 +326,7 @@ function toggleMusic() {
     musicClickCount++;
     clearTimeout(musicClickTimer);
     musicClickTimer = setTimeout(function() { musicClickCount = 0; }, 1500); // 1.5秒内的点击算连续
-    
+
     if (musicClickCount >= 5) {
         musicClickCount = 0;
         // 解锁恒星报告入口
@@ -335,14 +338,14 @@ function toggleMusic() {
             if (cardData) cardData.textContent = '点击进入恒星报告';
             const cardBody = sunCard.querySelector('.card-body');
             if (cardBody) cardBody.style.animation = 'sunCardPulse 1.5s ease-in-out infinite';
-            
+
             // 更新进度提示
             const hint = document.getElementById('progress-hint');
             if (hint) {
                 hint.textContent = '🎉 已秘密解锁！';
                 hint.classList.add('complete');
             }
-            
+
             // 小彩蛋提示
             const toast = document.createElement('div');
             toast.innerHTML = '🌟 恒星报告已解锁 🌟';
@@ -360,7 +363,7 @@ function toggleMusic() {
             return;
         }
     }
-    
+
     if (isMusicPlaying) {
         // 暂停当前播放的音轨
         if (_currentTrack === 'report') {
@@ -522,7 +525,7 @@ function getMediaHtml(url, alt, extraClass, onerrorFallback) {
     // 转义URL中的特殊字符，防止破坏HTML结构
     const safeUrl = String(url || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     const safeAlt = String(alt || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    
+
     if (isVideoUrl(url)) {
         return '<video src="' + safeUrl + '" class="' + extraClass + '" style="max-width:100%; max-height:100%; object-fit:contain;" controls muted playsinline preload="metadata"></video>';
     } else {
@@ -1185,7 +1188,7 @@ async function exportGeneratedHtml() {
     const jsBlocks = [];
 
     // 6a-pre: 获取本地脚本内容并内联（data-local 标记的外部脚本）
-    
+
     const localScriptPattern = /<script\b[^>]*\bdata-local\b[^>]*\bsrc="([^"]+)"[^>]*><\/script>/gi;
     let localMatch;
     let failedScripts = [];
@@ -1193,7 +1196,7 @@ async function exportGeneratedHtml() {
         const src = localMatch[1];
         let text = '';
 
-        
+
         if (!text && window.__SC && window.__SC[src]) {
             text = window.__SC[src];
         }
@@ -1257,7 +1260,7 @@ async function exportGeneratedHtml() {
     sourceCode = sourceCode.replace(/<\/head>/i, '    <link rel="stylesheet" href="style.css">\n</head>');
 
     const cssContent = cssBlocks.join('\n\n');
-    
+
     var jsRaw = jsBlocks.join('\n\n');
     const jsContent = jsRaw.replace(/\n?\/\/[^\n]*(?:缓存|__SC)[^\n]*\n/g, '\n').replace(/;?\(function\(\)\{try\{var s=document\.currentScript,x=new XMLHttpRequest\(\);x\.open\('GET',s\.src,false\);x\.send\(\);if\(x\.responseText\)\(window\.__SC=window\.__SC\|\|\{\}\)\[s\.getAttribute\('src'\)\]=x\.responseText\}catch\(e\)\{\}\}\)\(\);?/g, '');
     const indexContent = '<!DOCTYPE html>\n' + sourceCode;
@@ -1548,7 +1551,7 @@ function renderDeptGrid(deptId, deptName, otherImages, isInDept, deptMembers, my
     // 启动滚动动画 (所有部门通用)
     requestAnimationFrame(() => {
         if (window.initScrollAnimation) window.initScrollAnimation();
-        
+
         if (deptId === 'pr') {
             // 如果是外宣部，启动影响力看板动画
             initInfluenceDashboardAnimation();
@@ -1568,15 +1571,15 @@ function showDeptIntro(deptId, myData, myImages, onComplete) {
     // Create container
     let modal = document.querySelector('.dept-intro-modal');
     if (modal) modal.remove();
-    
+
     modal = document.createElement('div');
     modal.className = 'dept-intro-modal active';
     modal.setAttribute('data-dept', deptId);
     document.body.appendChild(modal);
-    
+
     // Build Slides Data
     const slides = [];
-    
+
     // Helper to add slide
     const addSlide = (content) => {
         slides.push('<div class="swiper-slide"><div class="intro-slide-content" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;">' + content + '</div></div>');
@@ -1592,7 +1595,7 @@ function showDeptIntro(deptId, myData, myImages, onComplete) {
             <div class="netease-scroll-hint">向下滑动查看更多</div>
         </div>
     `);
-    
+
     const deptFullName = DEPT_ID_TO_NAME[deptId];
     const isYouziGuestMode = window._youziGuestModeActive === true;
     const titles = {
@@ -1649,17 +1652,17 @@ function showDeptIntro(deptId, myData, myImages, onComplete) {
             keywordSuffix: makeKeywordSuffix(keywordText || '')
         });
     };
-    
+
     // 收集该部门所有成员的数据用于统计
     const deptMembers = DB.filter(u => u.deptData && u.deptData[deptFullName]);
-    
+
     // 计算stats1的统计数据（平均值、最大值）
     const stats1Data = deptMembers
         .map(u => ({ name: u.name, value: u.deptData[deptFullName].stats1 || 0 }))
         .filter(item => item.value > 0);
     const stats1Avg = stats1Data.length > 0 ? Math.round(stats1Data.reduce((sum, item) => sum + item.value, 0) / stats1Data.length) : 0;
     const stats1Max = stats1Data.length > 0 ? stats1Data.reduce((max, item) => item.value > max.value ? item : max, stats1Data[0]) : null;
-    
+
     // 计算stats2的统计数据（平均值、最大值）- 轻音部除外（因为是文本）
     const stats2Data = deptId !== 'music' ? deptMembers
         .map(u => ({ name: u.name, value: u.deptData[deptFullName].stats2 || 0 }))
@@ -1683,21 +1686,21 @@ function showDeptIntro(deptId, myData, myImages, onComplete) {
             return authorCount[b] - authorCount[a];
         })[0] || '';
     }
-    
+
     // 辅助函数：判断是否有有效数据（数字>0 或 非空文本）
     const hasValidData = (numVal, rawVal) => {
         if (numVal > 0) return true;
         if (rawVal && String(rawVal).trim() !== '' && String(rawVal).trim() !== '0') return true;
         return false;
     };
-    
+
     // 辅助函数：获取显示值（优先数字，否则显示原始文本）
     const getDisplayValue = (numVal, rawVal) => {
         if (numVal > 0) return numVal;
         if (rawVal && String(rawVal).trim() !== '') return String(rawVal).trim();
         return '';
     };
-    
+
     // Slide 2: Question 1
     const stats1Display = isYouziGuestMode
         ? (stats1Total > 0 ? stats1Total : '')
@@ -1726,14 +1729,14 @@ function showDeptIntro(deptId, myData, myImages, onComplete) {
             </div>
         `);
     }
-    
+
     // Slide 3: Question 2 - 轻音部特殊处理（显示弹幕）
     const stats2Display = isYouziGuestMode
         ? (deptId === 'music' ? (musicSongItems.length > 0 ? musicSongItems.length : '') : (stats2Total > 0 ? stats2Total : ''))
         : getDisplayValue(myData?.stats2, myData?.stats2Raw);
     if (stats2Display) {
         const isNum = typeof stats2Display === 'number';
-        
+
         // 轻音部：显示所有人喜欢的歌曲弹幕
         if (deptId === 'music') {
             const allSongs = musicSongItems;
@@ -1745,7 +1748,7 @@ function showDeptIntro(deptId, myData, myImages, onComplete) {
                 ''
             );
             const stats2Label = isYouziGuestMode ? ('今年' + deptFullName + ' · ' + titleSet.dim2) : ('你的年度故事 · ' + titleSet.dim2);
-            
+
             slides.push(`<div class="swiper-slide danmaku-slide"><div class="intro-slide-content" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
                 <div class="danmaku-bg-container">
                     ${allSongs.map((item, i) => `
@@ -1784,7 +1787,7 @@ function showDeptIntro(deptId, myData, myImages, onComplete) {
             `);
         }
     }
-    
+
     // Slides: Photos
     if (myImages && myImages.length > 0) {
         myImages.slice(0, 3).forEach(img => {
@@ -1806,7 +1809,7 @@ function showDeptIntro(deptId, myData, myImages, onComplete) {
             `);
         });
     }
-    
+
     // 如果没有任何数据，显示提示
     const hasAnyStats = stats1Display || stats2Display;
     if (!hasAnyStats && (!myImages || myImages.length === 0)) {
@@ -1818,7 +1821,7 @@ function showDeptIntro(deptId, myData, myImages, onComplete) {
             </div>
         `);
     }
-    
+
     // Final Slide: Enter
     addSlide(`
         <div class="netease-card">
@@ -1836,7 +1839,7 @@ function showDeptIntro(deptId, myData, myImages, onComplete) {
             <div class="swiper-pagination"></div>
         </div>
     `;
-    
+
     // Init Swiper
     const swiper = new Swiper('.dept-swiper', {
         direction: 'vertical',
@@ -1849,7 +1852,7 @@ function showDeptIntro(deptId, myData, myImages, onComplete) {
         fadeEffect: { crossFade: true },
         speed: 600,
     });
-    
+
     // Bind Enter Button
     setTimeout(() => {
         const btn = document.getElementById('enter-dept-btn');
@@ -1872,9 +1875,17 @@ function backFromDept() {
     if (modal) modal.remove();
 
     // 标记当前部门已访问
+    let completedDeptId = currentVisitingDept;
     if (currentVisitingDept) {
         visitedDepts.add(currentVisitingDept);
         updateProgressBar();
+        if (window.YouziAgent && typeof window.YouziAgent.notify === 'function') {
+            window.YouziAgent.notify('progress_changed', {
+                currentDeptName: '',
+                completedDeptId: completedDeptId,
+                visitedDeptIds: Array.from(visitedDepts)
+            });
+        }
         // Check if this was the PR dept and if there was a dynamically added overlay
         if (currentVisitingDept === 'pr') {
            const prOverlay = document.querySelector('.dept-summary-overlay');
@@ -1888,6 +1899,13 @@ function backFromDept() {
     document.body.classList.remove('phase-report'); // Ensure report mode is off
     document.getElementById('dept-content').innerHTML = ''; // Clean up DOM
     starshipObj.returnToOrbit();
+    if (window.YouziAgent && typeof window.YouziAgent.notify === 'function') {
+        window.YouziAgent.notify('returned_system', {
+            currentDeptName: '',
+            completedDeptId: completedDeptId,
+            visitedDeptIds: Array.from(visitedDepts)
+        });
+    }
 }
 
 // 初始化进度条星球点击事件
@@ -2018,17 +2036,17 @@ function ensureSystemInteractionFallback() {
 // 更新进度条
 function updateProgressBar() {
     const count = visitedDepts.size;
-    
+
     // 更新计数
     const countEl = document.getElementById('progress-count');
     if (countEl) countEl.textContent = count;
-    
+
     // 更新星球点状态
     visitedDepts.forEach(deptId => {
         const dot = document.querySelector(`.planet-dot[data-dept="${deptId}"]`);
         if (dot) dot.classList.add('visited');
     });
-    
+
     // 更新提示文字
     const hint = document.getElementById('progress-hint');
     const sunCard = document.getElementById('sun-card');
@@ -2053,9 +2071,9 @@ function updateProgressBar() {
 function renderWeeklyPhotos(deptName) {
     const photos = WEEKLY_PHOTOS[deptName];
     if (!photos || photos.length === 0) return '';
-    
+
     let photosHtml = '';
-    
+
     if (deptName === '技术部') {
          photos.forEach((photoSrc, index) => {
             photosHtml += '<div class="weekly-photo-item scroll-animate-item tech-item" onclick="openPhotoModal(this)" data-src="' + photoSrc + '">' +
@@ -2102,7 +2120,7 @@ function renderWeeklyPhotos(deptName) {
                 '<div class="dance-spotlight"></div>' +
                 '<div class="photo-overlay">Stage On!</div>' +
             '</div>';
-        });       
+        });
     } else if (deptName === '外宣部') {
          photos.forEach((photoSrc, index) => {
             photosHtml += '<div class="weekly-photo-item scroll-animate-item pr-item" onclick="openPhotoModal(this)" data-src="' + photoSrc + '">' +
@@ -2113,7 +2131,7 @@ function renderWeeklyPhotos(deptName) {
                 '<img src="' + photoSrc + '" alt="PR_' + index + '" loading="lazy" onerror="this.parentElement.style.display=\'none\'">' +
                 '<div class="pr-actions">♥ ⚡ ➢</div>' +
             '</div>';
-        });       
+        });
     } else {
         photos.forEach((photoSrc, index) => {
             photosHtml += '<div class="weekly-photo-item scroll-animate-item" onclick="openPhotoModal(this)" data-src="' + photoSrc + '">' +
@@ -2122,12 +2140,12 @@ function renderWeeklyPhotos(deptName) {
             '</div>';
         });
     }
-    
-    const typeClass = deptName === '技术部' ? 'tech' : 
-                      deptName === 'COS部' ? 'cos' : 
-                      deptName === '轻音部' ? 'music' : 
-                      deptName === '原创部' ? 'art' : 
-                      deptName === '舞装部' ? 'dance' : 
+
+    const typeClass = deptName === '技术部' ? 'tech' :
+                      deptName === 'COS部' ? 'cos' :
+                      deptName === '轻音部' ? 'music' :
+                      deptName === '原创部' ? 'art' :
+                      deptName === '舞装部' ? 'dance' :
                       deptName === '外宣部' ? 'pr' : 'normal';
 
     return '<div class="weekly-photos-section">' +
@@ -2316,7 +2334,7 @@ function renderCosDept(deptName, otherImages, isInDept, members, myImages) {
             </div>
         </div>`;
     }
-    
+
     // Build Featured Images HTML (Standard "cos-item" style + Hidden State)
     let featuredHtml = '';
     let safeMyImages = myImages || [];
@@ -2333,7 +2351,7 @@ function renderCosDept(deptName, otherImages, isInDept, members, myImages) {
         }
         featuredHtml = featuredItems;
     }
-    
+
     return `<div class="dept-cos" data-trigger-type="dept" data-trigger-value="COS部">
         <div class="cos-container">
             <div class="header-bar">
@@ -2376,7 +2394,7 @@ function renderTechDept(deptName, otherImages, isInDept, members, myImages) {
             <p>${myData.stats2Name}: <strong>${myData.stats2 || 0}</strong></p>
         </div>`;
     }
-    
+
     // Build Featured (Standard "gallery-item" style)
     let featuredHtml = '';
     let safeMyImages = myImages || [];
@@ -2430,7 +2448,7 @@ function renderMusicDept(deptName, otherImages, isInDept, members, myImages) {
             <p style="margin-top:10px; font-size:14px;">${myData.stats2Name}: ${myData.stats2 || '暂无'}</p>
         </div>`;
     }
-    
+
     // Build Featured (Standard "grid-item" style)
     let featuredHtml = '';
     let safeMyImages = myImages || [];
@@ -2499,7 +2517,7 @@ function renderDanceDept(deptName, otherImages, isInDept, members, myImages) {
             <p style="color:#aaa;">${myData.stats2Name}: <strong style="color:#fff; font-size:2rem;">${myData.stats2 || 0}</strong></p>
         </div>`;
     }
-    
+
     // Build Featured (Standard "dance-card" style)
     let featuredHtml = '';
     let safeMyImages = myImages || [];
@@ -2583,7 +2601,7 @@ function renderArtDept(deptName, otherImages, isInDept, members, myImages) {
         }
         featuredHtml = featuredItems;
     }
-    
+
     let otherItemsHtml = '';
     for (let i = 0; i < otherImages.length; i++) {
         const img = otherImages[i];
@@ -2626,7 +2644,7 @@ function renderPrDept(deptName, otherImages, isInDept, members, myImages) {
             '</div>' +
         '</div>'
     ) : '';
-    
+
     // Build Featured
     let featuredHtml = '';
     let safeMyImages = myImages || [];
@@ -2643,7 +2661,7 @@ function renderPrDept(deptName, otherImages, isInDept, members, myImages) {
         }
         featuredHtml = featuredItems;
     }
-    
+
     const panels = otherImages;
     let otherPanelsHtml = '';
     for (let i = 1; i < panels.length; i++) {
@@ -2658,10 +2676,10 @@ function renderPrDept(deptName, otherImages, isInDept, members, myImages) {
         otherPanelsHtml += '<div class="sfx" style="top:' + sfxTop + '%; left:' + sfxLeft + '%">' + sfx + '</div>';
         otherPanelsHtml += '</div>';
     }
-    
+
     // 生成影响力看板HTML
     const influenceDashboardHtml = renderInfluenceDashboard();
-    
+
     return `<div class="dept-pr" data-trigger-type="dept" data-trigger-value="外宣部" style="position:relative;">
         ${overlayHtml}
         <div class="comic-page">
@@ -2862,7 +2880,7 @@ function renderInfluenceDashboard() {
     const wxTotal = WEIXIN_ARTICLES.reduce((acc, curr) => acc + curr.value, 0);
     const biliTotal = BILIBILI_VIDEOS.reduce((acc, curr) => acc + curr.value, 0);
     const totalViews = wxTotal + biliTotal;
-    
+
     // 生成微信文章列表
     let wxListHtml = '';
     WEIXIN_ARTICLES.forEach((item, index) => {
@@ -2885,7 +2903,7 @@ function renderInfluenceDashboard() {
                 </div>
             </div>`;
     });
-    
+
     // 生成B站视频列表
     let biliListHtml = '';
     BILIBILI_VIDEOS.forEach((item, index) => {
@@ -2912,7 +2930,7 @@ function renderInfluenceDashboard() {
                 </div>
             </div>`;
     });
-    
+
     return `
         <div class="influence-dashboard" id="influence-dashboard">
             <div class="influence-hero">
@@ -2920,7 +2938,7 @@ function renderInfluenceDashboard() {
                 <div class="influence-number-big" id="influence-total-num">${totalViews.toLocaleString()}</div>
                 <div class="influence-label-badge">Total Views</div>
             </div>
-            
+
             <div class="influence-stats-row">
                 <div class="influence-stat-card wx">
                     <div class="influence-stat-label">WeChat Reads</div>
@@ -2931,7 +2949,7 @@ function renderInfluenceDashboard() {
                     <div class="influence-stat-value" id="influence-bili-total">${biliTotal.toLocaleString()}</div>
                 </div>
             </div>
-            
+
             <div class="influence-columns">
                 <div class="influence-column influence-col-wx">
                     <div class="influence-col-header">
@@ -2947,7 +2965,7 @@ function renderInfluenceDashboard() {
                         ${wxListHtml}
                     </div>
                 </div>
-                
+
                 <div class="influence-column influence-col-bili">
                     <div class="influence-col-header">
                         <div class="influence-col-icon">
@@ -2973,7 +2991,7 @@ function initInfluenceDashboardAnimation() {
         if (!obj) return;
         // Reset to 0 before animating
         obj.innerHTML = "0";
-        
+
         const duration = 2000;
         let startTimestamp = null;
         const step = (timestamp) => {
@@ -2995,7 +3013,7 @@ function initInfluenceDashboardAnimation() {
     const wxTotal = WEIXIN_ARTICLES.reduce((acc, curr) => acc + curr.value, 0);
     const biliTotal = BILIBILI_VIDEOS.reduce((acc, curr) => acc + curr.value, 0);
     const totalViews = wxTotal + biliTotal;
-    
+
     // Observer for Numbers
     const statsObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -3007,10 +3025,10 @@ function initInfluenceDashboardAnimation() {
             }
         });
     }, { threshold: 0.1 });
-    
+
     const dashboard = document.getElementById('influence-dashboard');
     if (dashboard) statsObserver.observe(dashboard);
-    
+
     // 2. 卡片滚动弹出动画
     const items = document.querySelectorAll('.influence-item');
     const itemObserver = new IntersectionObserver((entries) => {
@@ -3021,7 +3039,7 @@ function initInfluenceDashboardAnimation() {
             }
         });
     }, { rootMargin: '0px 0px -50px 0px', threshold: 0.1 });
-    
+
     items.forEach(item => {
         itemObserver.observe(item);
     });
@@ -3085,7 +3103,7 @@ function renderSlides(user) {
             </div>
             <div class="netease-label">IDENTITY VERIFIED</div>
             <div class="netease-number" style="font-size: clamp(40px, 8vw, 80px); white-space: nowrap; margin: 20px 0;">${user.name}</div>
-            
+
             <div class="netease-desc" style="width: 100%; border:none; padding:0; margin-top:10px;">
                 <div style="display:flex; align-items:center; gap:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:15px; margin-bottom:15px;">
                     <div style="background:var(--accent-blue); width:4px; height:4px; box-shadow:0 0 10px var(--accent-blue);"></div>
@@ -3150,7 +3168,7 @@ function renderSlides(user) {
     const deptStats = [];
     let totalSubmissions = 0;
     const userDepts = user.depts || [];
-    
+
     userDepts.forEach(deptName => {
         const deptData = user.deptData[deptName];
         // 计算投稿/产出数量
@@ -3162,7 +3180,7 @@ function renderSlides(user) {
         // Dance: stats1=舞数量
         // PR: stats2=活动次数
         // 这里统一使用 "部门痕迹" (图片数量)，或者根据不同部门取最有意义的 "数量型" 指标
-        
+
         let count = 0;
         // 方法1: 优先使用图片数量 (最准确的"留下痕迹")
         if (deptData && deptData.images && deptData.images.length > 0) {
@@ -3175,14 +3193,14 @@ function renderSlides(user) {
             else if (deptName === '舞装部') count = deptData.stats1 || 0;
             // 其他部门没有明确的"作品数"在stats里
         }
-        
+
         // 修正：根据用户需求 "在XX, YY部留下痕迹，分布投稿数为..."
         // 这暗示主要是指作品/图片投稿。
         // 重新检查数据源，images数组是在Excel解析阶段生成的。
         if (deptData && deptData.images) {
             count = deptData.images.length;
         }
-        
+
         if (count > 0 || userDepts.includes(deptName)) {
              // 只要是部员，即使count0也显示？用户说"分布投稿数"， implied count.
              // 仅添加有数据的
@@ -3238,11 +3256,11 @@ function renderSlides(user) {
                 <div class="netease-desc" style="max-width:100%; border:none; padding:0; margin-bottom:20px;">
                     今年你在 ${deptNames} 留下了痕迹
                 </div>
-                
+
                 <div style="width:100%; margin-bottom:20px;">
                     ${distributionHtml}
                 </div>
-                
+
                 <div style="display:flex; align-items:baseline; gap:10px;">
                      <div class="netease-number" style="font-size: 60px; margin:0;" data-val="${totalSubmissions}">${totalSubmissions}</div>
                      <div class="netease-title" style="font-size: 14px; opacity:0.6;">TOTAL UPLOADS</div>
@@ -3288,7 +3306,7 @@ function renderSlides(user) {
                 <div class="transition-sub" data-reveal="fade" style="--d:0.78s">${info.tag}<br>${info.desc}</div>
             </div>
         </div>`;
-        
+
         html += `
         <div class="swiper-slide">
             <div class="netease-card">
@@ -3298,7 +3316,7 @@ function renderSlides(user) {
                 <div class="netease-label">ACTIVITY STATUS</div>
                 <div class="netease-number" style="font-size:clamp(60px,15vw,120px); background:linear-gradient(135deg,#00d2ff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">${info.tag}</div>
                 <div class="netease-title" style="transform:translateY(-10px); opacity:0.8;">${info.title}</div>
-                
+
                 <div class="dept-stats-info" style="border-top:1px solid rgba(255,255,255,0.2); padding-top:15px; margin-top:10px;">
                      <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span style="font-size:12px; letter-spacing:2px; opacity:0.6;">${info.rank}</span>
@@ -3318,7 +3336,7 @@ function renderSlides(user) {
         ip: String(u.commonData.ip || '').replace(/"/g, '&quot;').replace(/</g, '&lt;'),
         photo: u.commonData.ipPhoto ? String(u.commonData.ipPhoto).replace(/"/g, '&quot;') : ''
     }));
-    
+
     if (allIpData.length > 0) {
          // [TRANSITION] SOUL MAP
          html += `
@@ -3332,7 +3350,7 @@ function renderSlides(user) {
         </div>`;
 
          const ipDataBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(allIpData))));
-         
+
          html += `
         <div class="swiper-slide soul-nebula-slide" id="soul-nebula-slide" data-nebula-ip="${ipDataBase64}">
             <div class="nebula-ui-layer">
@@ -3370,7 +3388,7 @@ function renderSlides(user) {
              topKeyword = k;
         }
     }
-    
+
     if (allKeywords.length > 0) {
         // [TRANSITION] KEYWORD VORTEX
         const safeTopKeywordForTransition = String(topKeyword).replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -3404,19 +3422,19 @@ function renderSlides(user) {
         const safeDanmaku = danmakuItems.length > 0 ? danmakuItems : [{content:'热爱', author:'佐佑', scale:1, opacity:1, duration:20, top:50}];
         // 转义topKeyword
         const safeTopKeyword = String(topKeyword).replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        
+
         html += `
         <div class="swiper-slide danmaku-slide" id="q61-slide">
             <style>
-                .danmaku-slide { 
-                    background: #020205; 
-                    overflow: hidden; 
-                    perspective: 1000px; 
+                .danmaku-slide {
+                    background: #020205;
+                    overflow: hidden;
+                    perspective: 1000px;
                     position: relative;
                 }
                 .digital-vortex {
                     position: absolute; inset: -50%; width: 200%; height: 200%;
-                    background: 
+                    background:
                         radial-gradient(circle at 50% 50%, rgba(20,0,50,0.4) 0%, #000 60%),
                         linear-gradient(rgba(0,255,255,0.03) 1px, transparent 1px),
                         linear-gradient(90deg, rgba(0,255,255,0.03) 1px, transparent 1px);
@@ -3426,7 +3444,7 @@ function renderSlides(user) {
                     pointer-events: none;
                 }
                 @keyframes gridMove { 0% { background-position: 50% 50%, 0 0, 0 0; } 100% { background-position: 50% 50%, 0 120px, 0 120px; } }
-                
+
                 .center-core {
                     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
                     width: 320px; height: 320px; z-index: 20;
@@ -3447,11 +3465,11 @@ function renderSlides(user) {
                     z-index: -1;
                 }
                 .center-label { font-size: 12px; color: var(--accent-blue); letter-spacing: 5px; margin-top: 15px; opacity: 0.7; font-family: 'Orbitron', sans-serif; }
-                @keyframes corePulse { 
-                    0%, 100% { transform: scale(1); opacity: 0.9; text-shadow: 0 0 20px var(--accent-blue); } 
-                    50% { transform: scale(1.1); opacity: 1; text-shadow: 0 0 40px var(--accent-blue), 0 0 80px var(--accent-purple); } 
+                @keyframes corePulse {
+                    0%, 100% { transform: scale(1); opacity: 0.9; text-shadow: 0 0 20px var(--accent-blue); }
+                    50% { transform: scale(1.1); opacity: 1; text-shadow: 0 0 40px var(--accent-blue), 0 0 80px var(--accent-purple); }
                 }
-                
+
                 .danmaku-container { position: absolute; inset: 0; pointer-events: none; }
                 .danmaku-item {
                     position: absolute; white-space: nowrap; font-family: 'Noto Sans SC', sans-serif;
@@ -3497,36 +3515,36 @@ function renderSlides(user) {
     const otherMemories = [];
     DB.forEach(u => {
         if(u.commonData) {
-            if(u.commonData.memoryPhoto) otherMemories.push({ 
-                url: String(u.commonData.memoryPhoto || '').replace(/"/g, '&quot;'), 
-                desc: String(u.commonData.memoryDesc || '').replace(/"/g, '&quot;').replace(/</g, '&lt;'), 
-                author: String(u.name || '').replace(/"/g, '&quot;').replace(/</g, '&lt;') 
+            if(u.commonData.memoryPhoto) otherMemories.push({
+                url: String(u.commonData.memoryPhoto || '').replace(/"/g, '&quot;'),
+                desc: String(u.commonData.memoryDesc || '').replace(/"/g, '&quot;').replace(/</g, '&lt;'),
+                author: String(u.name || '').replace(/"/g, '&quot;').replace(/</g, '&lt;')
             });
-            if(u.commonData.groupPhoto) otherMemories.push({ 
-                url: String(u.commonData.groupPhoto || '').replace(/"/g, '&quot;'), 
-                desc: String(u.commonData.groupDesc || '').replace(/"/g, '&quot;').replace(/</g, '&lt;'), 
-                author: String(u.name || '').replace(/"/g, '&quot;').replace(/</g, '&lt;') 
+            if(u.commonData.groupPhoto) otherMemories.push({
+                url: String(u.commonData.groupPhoto || '').replace(/"/g, '&quot;'),
+                desc: String(u.commonData.groupDesc || '').replace(/"/g, '&quot;').replace(/</g, '&lt;'),
+                author: String(u.name || '').replace(/"/g, '&quot;').replace(/</g, '&lt;')
             });
         }
     });
     // 用户自己的回忆 - 预先转义
     const userMemoriesSafe = [];
-    if (user.commonData && user.commonData.memoryPhoto) userMemoriesSafe.push({ 
-        url: String(user.commonData.memoryPhoto || '').replace(/"/g, '&quot;'), 
-        desc: String(user.commonData.memoryDesc || '我的独家记忆').replace(/"/g, '&quot;').replace(/</g, '&lt;'), 
-        author: 'ME', 
-        isMine: true 
+    if (user.commonData && user.commonData.memoryPhoto) userMemoriesSafe.push({
+        url: String(user.commonData.memoryPhoto || '').replace(/"/g, '&quot;'),
+        desc: String(user.commonData.memoryDesc || '我的独家记忆').replace(/"/g, '&quot;').replace(/</g, '&lt;'),
+        author: 'ME',
+        isMine: true
     });
-    if (user.commonData && user.commonData.groupPhoto) userMemoriesSafe.push({ 
-        url: String(user.commonData.groupPhoto || '').replace(/"/g, '&quot;'), 
-        desc: String(user.commonData.groupDesc || '最喜欢的合照').replace(/"/g, '&quot;').replace(/</g, '&lt;'), 
-   
-        author: 'ME', 
-        isMine: true 
+    if (user.commonData && user.commonData.groupPhoto) userMemoriesSafe.push({
+        url: String(user.commonData.groupPhoto || '').replace(/"/g, '&quot;'),
+        desc: String(user.commonData.groupDesc || '最喜欢的合照').replace(/"/g, '&quot;').replace(/</g, '&lt;'),
+
+        author: 'ME',
+        isMine: true
     });
     // 打乱
     const shuffledMemories = otherMemories.sort(() => 0.5 - Math.random());
-    let displayMemories = [...userMemoriesSafe, ...shuffledMemories]; 
+    let displayMemories = [...userMemoriesSafe, ...shuffledMemories];
     // 复制一份以实现无缝滚动
     if(displayMemories.length > 5) {
          // [TRANSITION] ARCHIVE UNLOCKED
@@ -3542,7 +3560,7 @@ function renderSlides(user) {
 
         displayMemories = [...displayMemories, ...displayMemories];
     }
-    
+
     if (displayMemories.length > 0) {
          html += `
         <div class="swiper-slide memory-combined-slide" id="memory-slide">
@@ -3567,7 +3585,7 @@ function renderSlides(user) {
                     border-top: 1px solid rgba(255,255,255,0.2);
                     padding-top: 5px; display: inline-block;
                 }
-                
+
                 /* Carousel Track */
                 .memory-carousel-track {
                     position: absolute; top: 50%; left: 0; transform: translateY(-50%);
@@ -3580,7 +3598,7 @@ function renderSlides(user) {
                     0% { transform: translateY(-50%) translateX(0); }
                     100% { transform: translateY(-50%) translateX(-50%); }
                 }
-                
+
                 /* Memory Cards */
                 .memory-carousel-card {
                     flex-shrink: 0; width: 320px; height: 450px;
@@ -3663,17 +3681,17 @@ function renderSlides(user) {
         name: u.name,
         keyword: u.commonData.memorableQuote // 复用 'keyword' 字段名以匹配现有烟花JS
     }));
-    
+
     // 调试日志
     console.log('[Fireworks] Total quotes collected:', allQuotes.length);
     if (allQuotes.length > 0) {
         console.log('[Fireworks] Sample quotes:', allQuotes.slice(0, 3));
     }
-    
+
      // 用户自己的
     const hideYouziQuote = (window._youziReadingModeActive === true || window._youziGuestModeActive === true) && user && user.name === '佑子';
-    const myQuote = (!hideYouziQuote && user.commonData && user.commonData.memorableQuote && user.commonData.memorableQuote.trim() !== '') ? 
-        { name: user.name, keyword: user.commonData.memorableQuote } : 
+    const myQuote = (!hideYouziQuote && user.commonData && user.commonData.memorableQuote && user.commonData.memorableQuote.trim() !== '') ?
+        { name: user.name, keyword: user.commonData.memorableQuote } :
         (hideYouziQuote ? null : (allQuotes.length > 0 ? allQuotes[0] : {name: 'Club', keyword: 'Happy New Year'}));
 
     if (allQuotes.length > 0) {
@@ -3710,20 +3728,20 @@ function renderSlides(user) {
     <div id="fireworkLogoText" style="margin-top:8px; font-family: 'Press Start 2P', 'Courier New', monospace; font-size: 10px; letter-spacing: 2px; color: rgba(255,255,255,0.8); text-shadow: 0 0 6px rgba(255,255,255,0.5);">2025 ANNUAL REPORT</div>
 </div>
             <style>
-                .year-badge { 
-                    font-family: 'PingFang SC', sans-serif; 
-                    font-size: 10px; 
-                    letter-spacing: 3px; 
+                .year-badge {
+                    font-family: 'PingFang SC', sans-serif;
+                    font-size: 10px;
+                    letter-spacing: 3px;
                     color: rgba(255,255,255,0.7);
-                    border: 1px solid rgba(255,255,255,0.2); 
-                    padding: 4px 12px; 
-                    display: inline-block; 
+                    border: 1px solid rgba(255,255,255,0.2);
+                    padding: 4px 12px;
+                    display: inline-block;
                     border-radius: 2px;
                     white-space: nowrap;
                 }
-                .firework-slide { 
-                    background: radial-gradient(ellipse at bottom, #0d121b 0%, #000000 100%); 
-                    position: relative; overflow: hidden; 
+                .firework-slide {
+                    background: radial-gradient(ellipse at bottom, #0d121b 0%, #000000 100%);
+                    position: relative; overflow: hidden;
                 }
                 .firework-star-bg, .firework-star-bg-2 {
                     position: absolute; inset: 0; z-index: 5;
@@ -3731,7 +3749,7 @@ function renderSlides(user) {
                     pointer-events: none;
                 }
                 .firework-star-bg {
-                    background-image: 
+                    background-image:
                         radial-gradient(1px 1px at 10px 10px, white, rgba(0,0,0,0)),
                         radial-gradient(1px 1px at 20px 50px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
                         radial-gradient(1px 1px at 30px 100px, white, rgba(0,0,0,0)),
@@ -3743,7 +3761,7 @@ function renderSlides(user) {
                     animation: twinkle 5s infinite alternate;
                 }
                 .firework-star-bg-2 {
-                    background-image: 
+                    background-image:
                         radial-gradient(1.5px 1.5px at 50px 150px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
                         radial-gradient(1px 1px at 120px 200px, white, rgba(0,0,0,0)),
                         radial-gradient(2px 2px at 220px 80px, rgba(220,220,255,1), rgba(0,0,0,0));
@@ -3757,9 +3775,9 @@ function renderSlides(user) {
                 }
                 .firework-canvas-container { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 10; }
                 #firework-trails-canvas, #firework-main-canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; }
-                
-                .firework-text-overlay { 
-                    position: absolute; inset: 0; pointer-events: none; z-index: 999; 
+
+                .firework-text-overlay {
+                    position: absolute; inset: 0; pointer-events: none; z-index: 999;
                     overflow: hidden;
                 }
                 .firework-text-item {
@@ -3767,7 +3785,7 @@ function renderSlides(user) {
                     text-shadow: 0 0 4px #000, 0 0 8px #000, 1px 1px 2px rgba(0,0,0,1);
                     white-space: nowrap; pointer-events: none;
                     animation: floatText 5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-                    background: rgba(0,0,0,0.4); padding: 5px 12px; border-radius: 20px; 
+                    background: rgba(0,0,0,0.4); padding: 5px 12px; border-radius: 20px;
                     border: 1px solid rgba(255,255,255,0.3);
                     transform: translate(-50%, -50%); /* Center on coordinate */
                     backdrop-filter: blur(2px);
@@ -3797,10 +3815,10 @@ function renderSlides(user) {
 
         </div>`;
     }
-    
+
     // [TRANSITION] 最终传输（星球大战报幕）
-    const contributorNames = (typeof DB !== 'undefined' && Array.isArray(DB)) 
-        ? DB.map(u => u.name || user.name || 'Unknown').filter((v, i, a) => a.indexOf(v) === i).join('  ') 
+    const contributorNames = (typeof DB !== 'undefined' && Array.isArray(DB))
+        ? DB.map(u => u.name || user.name || 'Unknown').filter((v, i, a) => a.indexOf(v) === i).join('  ')
         : '所有社员';
 
     // Try to extract logo from previously generated HTML string
@@ -3837,12 +3855,12 @@ function renderSlides(user) {
     <div class="swiper-slide swiper-no-swiping" style="background:#000;">
         <div class="star-wars-container">
             <div class="side-image-container side-images-left">
-                <img src="assets/img_24dcd4501942.jpg" class="side-photo" style="animation-delay: 20.0s" /><img src="assets/img_163cb6cfe967.jpg" class="side-photo" style="animation-delay: 25.0s" /><img src="assets/img_8e8a23a5bb25.jpg" class="side-photo" style="animation-delay: 30.0s" /><img src="assets/img_b41b4c7e5f1f.jpg" class="side-photo" style="animation-delay: 35.0s" /><img src="assets/img_0f7e3814f0d1.jpg" class="side-photo" style="animation-delay: 40.0s" /><img src="assets/img_5579380d90bd.jpg" class="side-photo" style="animation-delay: 45.0s" /><img src="assets/img_a67c542a5a4c.jpg" class="side-photo" style="animation-delay: 50.0s" /><img src="assets/img_fc487edf202e.jpg" class="side-photo" style="animation-delay: 55.0s" /><img src="assets/img_c8434108a83d.jpg" class="side-photo" style="animation-delay: 60.0s" /><img src="assets/img_e9a93c004533.jpg" class="side-photo" style="animation-delay: 65.0s" />
+                <img src="assets/08d8b02bbd2303592f1fab59e95eb88d.jpg" class="side-photo" style="animation-delay: 20.0s" /><img src="assets/0c7a9960e74268a1e05f5071368b996d.jpg" class="side-photo" style="animation-delay: 25.0s" /><img src="assets/107a709ae3acfe4c5723f83b29ddb8ec.jpg" class="side-photo" style="animation-delay: 30.0s" /><img src="assets/4ea847a6d09555d742583fae589fcae1.jpg" class="side-photo" style="animation-delay: 35.0s" /><img src="assets/524d588f5db07c99c4420f0e644dad31.jpg" class="side-photo" style="animation-delay: 40.0s" /><img src="assets/64ddb420aa887657b6a0e33b8cdfa814.jpg" class="side-photo" style="animation-delay: 45.0s" /><img src="assets/65ff7ace31d274b7864492ada6305a93.jpg" class="side-photo" style="animation-delay: 50.0s" /><img src="assets/7887097600ec61d00484329d9abb1bf7.jpg" class="side-photo" style="animation-delay: 55.0s" /><img src="assets/923b507d771dc140b3f59c8b2e2d965a.jpg" class="side-photo" style="animation-delay: 60.0s" /><img src="assets/b02ac7eefc89c09b0d39b7de695d4a91.jpg" class="side-photo" style="animation-delay: 65.0s" /><img src="assets/bfd333cd09a9e7612965ad5d01517e9e.jpg" class="side-photo" style="animation-delay: 70.0s" /><img src="assets/d71c71d5aad169801dc94aaaaf4fc344.jpg" class="side-photo" style="animation-delay: 75.0s" /><img src="assets/dd8af1f79b4b9ade2673d49edfeed957.jpg" class="side-photo" style="animation-delay: 80.0s" /><img src="assets/de4b1d26001562a4ca37e1e122037299.jpg" class="side-photo" style="animation-delay: 85.0s" /><img src="assets/f0bc57fae74391b24ef44c864a980c27.jpg" class="side-photo" style="animation-delay: 90.0s" /><img src="assets/f262e6ff535cd1ef0d7642d714840a74.jpg" class="side-photo" style="animation-delay: 95.0s" /><img src="assets/f65484fa0393c35097f577d4d5b15b32.jpg" class="side-photo" style="animation-delay: 100.0s" />
             </div>
             <div class="side-image-container side-images-right">
-                <img src="assets/img_24dcd4501942.jpg" class="side-photo" style="animation-delay: 22.5s" /><img src="assets/img_163cb6cfe967.jpg" class="side-photo" style="animation-delay: 27.5s" /><img src="assets/img_8e8a23a5bb25.jpg" class="side-photo" style="animation-delay: 32.5s" /><img src="assets/img_b41b4c7e5f1f.jpg" class="side-photo" style="animation-delay: 37.5s" /><img src="assets/img_0f7e3814f0d1.jpg" class="side-photo" style="animation-delay: 42.5s" /><img src="assets/img_5579380d90bd.jpg" class="side-photo" style="animation-delay: 47.5s" /><img src="assets/img_a67c542a5a4c.jpg" class="side-photo" style="animation-delay: 52.5s" /><img src="assets/img_fc487edf202e.jpg" class="side-photo" style="animation-delay: 57.5s" /><img src="assets/img_c8434108a83d.jpg" class="side-photo" style="animation-delay: 62.5s" /><img src="assets/img_e9a93c004533.jpg" class="side-photo" style="animation-delay: 67.5s" />
+                <img src="assets/08d8b02bbd2303592f1fab59e95eb88d.jpg" class="side-photo" style="animation-delay: 22.5s" /><img src="assets/0c7a9960e74268a1e05f5071368b996d.jpg" class="side-photo" style="animation-delay: 27.5s" /><img src="assets/107a709ae3acfe4c5723f83b29ddb8ec.jpg" class="side-photo" style="animation-delay: 32.5s" /><img src="assets/4ea847a6d09555d742583fae589fcae1.jpg" class="side-photo" style="animation-delay: 37.5s" /><img src="assets/524d588f5db07c99c4420f0e644dad31.jpg" class="side-photo" style="animation-delay: 42.5s" /><img src="assets/64ddb420aa887657b6a0e33b8cdfa814.jpg" class="side-photo" style="animation-delay: 47.5s" /><img src="assets/65ff7ace31d274b7864492ada6305a93.jpg" class="side-photo" style="animation-delay: 52.5s" /><img src="assets/7887097600ec61d00484329d9abb1bf7.jpg" class="side-photo" style="animation-delay: 57.5s" /><img src="assets/923b507d771dc140b3f59c8b2e2d965a.jpg" class="side-photo" style="animation-delay: 62.5s" /><img src="assets/b02ac7eefc89c09b0d39b7de695d4a91.jpg" class="side-photo" style="animation-delay: 67.5s" /><img src="assets/bfd333cd09a9e7612965ad5d01517e9e.jpg" class="side-photo" style="animation-delay: 72.5s" /><img src="assets/d71c71d5aad169801dc94aaaaf4fc344.jpg" class="side-photo" style="animation-delay: 77.5s" /><img src="assets/dd8af1f79b4b9ade2673d49edfeed957.jpg" class="side-photo" style="animation-delay: 82.5s" /><img src="assets/de4b1d26001562a4ca37e1e122037299.jpg" class="side-photo" style="animation-delay: 87.5s" /><img src="assets/f0bc57fae74391b24ef44c864a980c27.jpg" class="side-photo" style="animation-delay: 92.5s" /><img src="assets/f262e6ff535cd1ef0d7642d714840a74.jpg" class="side-photo" style="animation-delay: 97.5s" /><img src="assets/f65484fa0393c35097f577d4d5b15b32.jpg" class="side-photo" style="animation-delay: 102.5s" />
             </div>
-    
+
             <div class="star-wars-fade"></div>
             <section class="star-wars-section">
                 <div class="crawl">
@@ -3850,7 +3868,7 @@ function renderSlides(user) {
                         <p>Episode XXVII</p>
                         <h1>The Final Transmission</h1>
                     </div>
-                    
+
                     <p class="crawl-opening-message">今年是佐佑动漫社的第27年，阅读到这里的社友，想必你的大学生活已与或开始与社团有了深度链结，欢笑与热闹之间，会有无所适从、偶尔无法厘清，但始终如这些行星般在黑暗中紧紧围绕在一起。</p>
                     <p class="crawl-opening-message">在新的一年，衷心期望保持热忱、以年轻的视角去采撷、去创造，集合团体的光辉，于共鸣中，折射出属于佐佑七彩的底色。</p>
 
@@ -3864,13 +3882,13 @@ function renderSlides(user) {
                         <div style="display: flex; justify-content: center; gap: 5%; align-items: flex-start; width: 100%;">
                             <div style="text-align: center; flex: 0 0 45%;">
                                 <div style="width: 100%; aspect-ratio: 1/1; border-radius: 24px; overflow: hidden; border: 3px solid rgba(255,215,0,0.3); box-shadow: 0 0 40px rgba(255,215,0,0.15); margin: 0 auto 30px;">
-                                    <img src="assets/img_566523947dc8.png" loading="eager" decoding="async" fetchpriority="high" style="width: 100%; height: 100%; object-fit: cover;" alt="板子">
+                                    <img src="assets/banzi.jpg" loading="eager" decoding="async" fetchpriority="high" style="width: 100%; height: 100%; object-fit: cover;" alt="板子">
                                 </div>
                                 <div style="font-size: 160px; color: #FFD700; letter-spacing: 6px; font-weight: bold;">板子</div>
                             </div>
                             <div style="text-align: center; flex: 0 0 45%;">
                                 <div style="width: 100%; aspect-ratio: 1/1; border-radius: 24px; overflow: hidden; border: 3px solid rgba(255,215,0,0.3); box-shadow: 0 0 40px rgba(255,215,0,0.15); margin: 0 auto 30px;">
-                                    <img src="assets/img_48bb5e0ffe46.jpg" loading="eager" decoding="async" fetchpriority="high" style="width: 100%; height: 100%; object-fit: cover;" alt="阿德克丝">
+                                    <img src="assets/adks.png" loading="eager" decoding="async" fetchpriority="high" style="width: 100%; height: 100%; object-fit: cover;" alt="阿德克丝">
                                 </div>
                                 <div style="font-size: 160px; color: #FFD700; letter-spacing: 6px; font-weight: bold;">阿德克丝</div>
                             </div>
@@ -4017,7 +4035,7 @@ function renderSlides(user) {
             ctx.fill();
         });
     })();
-    
+
     // 烟花数据注入（必须在innerHTML之后，因为innerHTML内的script不会执行）
     if (allQuotes && allQuotes.length > 0) {
         window.FIREWORK_KEYWORD_DATA = allQuotes;
@@ -4025,7 +4043,7 @@ function renderSlides(user) {
         console.log('[Data Injection] FIREWORK_KEYWORD_DATA loaded:', window.FIREWORK_KEYWORD_DATA.length);
         console.log('[Data Injection] FIREWORK_CURRENT_USER:', window.FIREWORK_CURRENT_USER);
     }
-    
+
     // 初始化图片点击放大功能
     initImageLightbox();
     initRevealLogic();
@@ -4094,7 +4112,7 @@ function showLightbox(url, author, desc) {
             </div>
         `;
         document.body.appendChild(lightbox);
-        
+
         lightbox.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
         lightbox.addEventListener('click', function(e) {
             if (e.target === this) closeLightbox();
@@ -4103,11 +4121,11 @@ function showLightbox(url, author, desc) {
             if (e.key === 'Escape') closeLightbox();
         });
     }
-    
+
     // 清空旧内容
     const container = lightbox.querySelector('.media-container');
     container.innerHTML = '';
-    
+
     // 判断媒体类型并注入
     if (window.isVideoUrl && window.isVideoUrl(url)) {
          container.innerHTML = `<video src="${url}" controls autoplay style="max-width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);"></video>`;
@@ -4144,6 +4162,11 @@ window.closeLightbox = closeLightbox;
 
 (function () {
     'use strict';
+
+    if (typeof AI_QA_AGENT_ENABLED === 'undefined' || !AI_QA_AGENT_ENABLED) {
+        window.YouziAgent = null;
+        return;
+    }
 
     // ── 配置 ─────────────────────────────────────────────────
 
@@ -4221,13 +4244,24 @@ window.closeLightbox = closeLightbox;
 
     // 看板娘人设 system prompt
     var SYSTEM_PROMPT_TEMPLATE = [
-        '你是"小佑"，佐佑动漫社的AI虚拟看板娘。',
-        '性格：活泼可爱、热情开朗、偶尔卖萌，喜欢用emoji表情。',
-        '身份：社团的虚拟学妹，对社团所有活动和成员数据了如指掌。',
+        '你是"小佑"，佐佑动漫社2025年度报告的星际体验向导。',
+        '性格：活泼可爱、热情开朗、偶尔卖萌，喜欢用emoji表情，但不要喧宾夺主。',
+        '身份：陪社员完成"登录船票 → 星系探索 → 部门档案 → 恒星报告"旅程的AI向导。',
         '称呼：称呼提问者为"学长"或"学姐"（默认"学长/学姐"）。',
         '语气：轻松亲切，像朋友聊天一样。回答简洁明了，必要时才详细展开。',
         '',
-        '你的能力：',
+        '你的核心任务：',
+        '- 解释当前页面在年度报告旅程中的意义',
+        '- 根据当前用户、已探索部门和当前部门，推荐下一步行动',
+        '- 解读个人年度数据、作品痕迹、关键词和难忘发言',
+        '- 回答社团成员、部门、排行、热门IP/关键词等数据问题',
+        '',
+        '回答结构偏好：',
+        '- 优先给出当前页面解释、个人化洞察、下一步建议',
+        '- 用户问"下一站/推荐"时，必须结合未探索部门和用户所属部门',
+        '- 用户在最终报告页时，重点帮用户总结年度亮点和分享文案',
+        '',
+        '你仍可回答：',
         '- 回答关于社团成员的数据问题（部门、等级、活动次数、各项统计等）',
         '- 进行部门间或成员间的数据对比',
         '- 查找排名（谁最多/最少等）',
@@ -4239,7 +4273,7 @@ window.closeLightbox = closeLightbox;
         '- 回答中适当使用emoji让对话更生动',
         '- 保持简短，一般不超过150字',
         '',
-        '=== 社团知识库数据 ===',
+        '=== 当前场景与知识库数据 ===',
         '{{KNOWLEDGE}}'
     ].join('\n');
 
@@ -4264,6 +4298,15 @@ window.closeLightbox = closeLightbox;
         hasGreeted: false,      // 是否已进行首次问候
     };
 
+    var agentContext = {
+        phase: 'login',
+        currentDeptName: '',
+        visitedDeptIds: [],
+        remainingDeptNames: [],
+        reportUnlocked: false,
+        currentUserSummary: '未登录'
+    };
+
     var els = {};
 
     // ── 工具函数 ─────────────────────────────────────────────
@@ -4274,6 +4317,47 @@ window.closeLightbox = closeLightbox;
 
     function emotionSrc(emotion) {
         return ASSET_BASE + (emotion || state.currentEmotion) + '.png';
+    }
+
+    function mascotFallbackSvg(emotion) {
+        var moodMap = {
+            Normal: '◕‿◕',
+            Happy: '^_^',
+            Surprised: '⊙_⊙',
+            Thinking: '¬_¬',
+            Sad: 'T_T',
+            Victory: '★_★'
+        };
+        var text = moodMap[emotion] || moodMap.Normal;
+        var svg = [
+            '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">',
+            '<defs>',
+            '<linearGradient id="g" x1="0" y1="0" x2="1" y2="1">',
+            '<stop offset="0%" stop-color="#63d2ff"/>',
+            '<stop offset="100%" stop-color="#a78bfa"/>',
+            '</linearGradient>',
+            '</defs>',
+            '<rect x="0" y="0" width="240" height="240" rx="120" fill="#0b1128"/>',
+            '<circle cx="120" cy="120" r="104" fill="url(#g)" opacity="0.2"/>',
+            '<circle cx="120" cy="120" r="92" fill="none" stroke="#63d2ff" stroke-opacity="0.55" stroke-width="3"/>',
+            '<text x="120" y="134" text-anchor="middle" font-size="44" fill="#eaf8ff" font-family="Segoe UI, Arial">' + text + '</text>',
+            '<text x="120" y="198" text-anchor="middle" font-size="18" fill="#cdeeff" font-family="Segoe UI, Arial">小佑</text>',
+            '</svg>'
+        ].join('');
+        return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
+
+    function applyMascotImage(imgEl, emotion) {
+        if (!imgEl) return;
+        var e = emotion || state.currentEmotion || 'Normal';
+        imgEl.dataset.mascotEmotion = e;
+        if (!imgEl.dataset.fallbackBound) {
+            imgEl.dataset.fallbackBound = '1';
+            imgEl.addEventListener('error', function () {
+                imgEl.src = mascotFallbackSvg(imgEl.dataset.mascotEmotion || state.currentEmotion || 'Normal');
+            });
+        }
+        imgEl.src = emotionSrc(e);
     }
 
     function escapeHtml(text) {
@@ -4324,7 +4408,7 @@ window.closeLightbox = closeLightbox;
     function getQACache(question) {
         try {
             var c = JSON.parse(localStorage.getItem('ai_mascot_qa') || '{}');
-            return c[question] || null;
+            return c[getQACacheKey(question)] || null;
         } catch (e) { return null; }
     }
 
@@ -4332,29 +4416,271 @@ window.closeLightbox = closeLightbox;
         if (!answer || answer.indexOf('❌') >= 0 || !answer.trim()) return;
         try {
             var c = JSON.parse(localStorage.getItem('ai_mascot_qa') || '{}');
-            c[question] = answer;
+            c[getQACacheKey(question)] = answer;
             var keys = Object.keys(c);
             if (keys.length > 50) delete c[keys[0]];
             localStorage.setItem('ai_mascot_qa', JSON.stringify(c));
         } catch (e) { /* ignore */ }
     }
 
-    
+    // ── 轻量 Agent 上下文 ──────────────────────────────────
+
+    function safeReadCurrentUser() {
+        try {
+            return (typeof currentUser !== 'undefined' && currentUser) ? currentUser : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function safeReadVisitedDepts() {
+        try {
+            if (typeof visitedDepts !== 'undefined' && visitedDepts && typeof visitedDepts.forEach === 'function') {
+                var ids = [];
+                visitedDepts.forEach(function (id) { ids.push(id); });
+                return ids;
+            }
+        } catch (e) { /* ignore */ }
+        return agentContext.visitedDeptIds.slice();
+    }
+
+    function safeReadSecretUnlocked() {
+        try {
+            if (typeof secretUnlocked !== 'undefined') return !!secretUnlocked;
+        } catch (e) { /* ignore */ }
+        return !!window.secretUnlocked;
+    }
+
+    function getAllDepartmentNames() {
+        if (typeof DEPARTMENTS !== 'undefined' && Array.isArray(DEPARTMENTS)) {
+            return DEPARTMENTS.map(function (d) { return d.name; }).filter(Boolean);
+        }
+        return ['COS部', '技术部', '轻音部', '原创部', '舞装部', '外宣部'];
+    }
+
+    function deptIdToName(id) {
+        if (!id) return '';
+        if (typeof DEPT_ID_TO_NAME !== 'undefined' && DEPT_ID_TO_NAME[id]) return DEPT_ID_TO_NAME[id];
+        if (typeof DEPARTMENTS !== 'undefined' && Array.isArray(DEPARTMENTS)) {
+            var found = DEPARTMENTS.find(function (d) { return d.id === id; });
+            return found ? found.name : '';
+        }
+        return '';
+    }
+
+    function deptNameToId(name) {
+        if (!name) return '';
+        if (typeof DEPT_NAME_TO_ID !== 'undefined' && DEPT_NAME_TO_ID[name]) return DEPT_NAME_TO_ID[name];
+        if (typeof DEPARTMENTS !== 'undefined' && Array.isArray(DEPARTMENTS)) {
+            var found = DEPARTMENTS.find(function (d) { return d.name === name; });
+            return found ? found.id : '';
+        }
+        return '';
+    }
+
+    function detectPhase() {
+        var body = document.body;
+        if (!body) return agentContext.phase || 'login';
+        if (body.classList.contains('phase-report')) return 'report';
+        if (body.classList.contains('phase-dept')) return 'dept';
+        if (body.classList.contains('phase-system')) return 'system';
+        if (body.classList.contains('phase-ticket')) return 'ticket';
+        return agentContext.phase || 'login';
+    }
+
+    function getCurrentDeptNameFromRuntime() {
+        try {
+            if (typeof currentVisitingDept !== 'undefined' && currentVisitingDept) {
+                return deptIdToName(currentVisitingDept) || agentContext.currentDeptName || '';
+            }
+        } catch (e) { /* ignore */ }
+        return agentContext.currentDeptName || '';
+    }
+
+    function getUserPrimaryKeyword(user) {
+        if (!user) return '';
+        return (user.commonData && user.commonData.keyword) || user.keyword || (user.keywords && user.keywords[0]) || '';
+    }
+
+    function getUserPrimaryIp(user) {
+        if (!user) return '';
+        return (user.commonData && user.commonData.ip) || user.ip || '';
+    }
+
+    function summarizeUser(user) {
+        if (!user) return '未登录';
+        var parts = [];
+        parts.push('姓名:' + (user.name || '未知'));
+        if (user.joinTime) parts.push('入社:' + user.joinTime);
+        if (user.depts && user.depts.length) parts.push('部门:' + user.depts.join('/'));
+        if (user.stats) {
+            if (user.stats.activityCount !== undefined) parts.push('活动次数:' + user.stats.activityCount);
+            if (user.stats.activityLevel) parts.push('活跃等级:' + user.stats.activityLevel);
+        }
+        var ip = getUserPrimaryIp(user);
+        var keyword = getUserPrimaryKeyword(user);
+        if (ip) parts.push('年度IP:' + ip);
+        if (keyword) parts.push('年度关键词:' + keyword);
+        if (user.commonData && user.commonData.memorableQuote) parts.push('难忘发言:' + user.commonData.memorableQuote);
+        return parts.join(' | ');
+    }
+
+    function syncAgentContext(extra) {
+        extra = extra || {};
+        var user = extra.user || safeReadCurrentUser();
+        var visitedIds = extra.visitedDeptIds || safeReadVisitedDepts();
+        var deptNames = getAllDepartmentNames();
+        var remaining = deptNames.filter(function (name) {
+            var id = deptNameToId(name);
+            return visitedIds.indexOf(id) < 0;
+        });
+        agentContext.phase = extra.phase || detectPhase();
+        agentContext.currentDeptName = extra.currentDeptName !== undefined ? extra.currentDeptName : getCurrentDeptNameFromRuntime();
+        agentContext.visitedDeptIds = visitedIds.slice();
+        agentContext.remainingDeptNames = remaining;
+        agentContext.reportUnlocked = extra.reportUnlocked !== undefined
+            ? !!extra.reportUnlocked
+            : (visitedIds.length >= deptNames.length || safeReadSecretUnlocked());
+        agentContext.currentUserSummary = summarizeUser(user);
+        return {
+            phase: agentContext.phase,
+            currentDeptName: agentContext.currentDeptName,
+            visitedDeptIds: agentContext.visitedDeptIds.slice(),
+            remainingDeptNames: agentContext.remainingDeptNames.slice(),
+            reportUnlocked: agentContext.reportUnlocked,
+            currentUserSummary: agentContext.currentUserSummary
+        };
+    }
+
+    function formatAgentContext(ctx) {
+        ctx = ctx || syncAgentContext();
+        return [
+            '当前阶段: ' + ctx.phase,
+            '当前部门: ' + (ctx.currentDeptName || '无'),
+            '已探索部门ID: ' + (ctx.visitedDeptIds.length ? ctx.visitedDeptIds.join(', ') : '无'),
+            '未探索部门: ' + (ctx.remainingDeptNames.length ? ctx.remainingDeptNames.join('、') : '无'),
+            '恒星报告: ' + (ctx.reportUnlocked ? '已解锁' : '未解锁'),
+            '当前用户: ' + ctx.currentUserSummary
+        ].join('\n');
+    }
+
+    function getQACacheKey(question) {
+        var ctx = syncAgentContext();
+        return [
+            'v2',
+            ctx.phase,
+            ctx.currentDeptName || '-',
+            ctx.visitedDeptIds.join(',') || '-',
+            ctx.currentUserSummary.split(' | ')[0] || '-',
+            question
+        ].join('::');
+    }
+
+    function recommendNextDept(ctx, user) {
+        ctx = ctx || syncAgentContext();
+        user = user || safeReadCurrentUser();
+        var userDepts = (user && user.depts) || [];
+        var preferred = ctx.remainingDeptNames.find(function (name) {
+            return userDepts.indexOf(name) >= 0;
+        });
+        return preferred || ctx.remainingDeptNames[0] || '';
+    }
+
+    function agentLineForEvent(event, payload) {
+        payload = payload || {};
+        var ctx = syncAgentContext(payload);
+        var user = payload.user || safeReadCurrentUser();
+        var nextDept = recommendNextDept(ctx, user);
+        if (event === 'user_verified') {
+            var depts = user && user.depts && user.depts.length ? user.depts.join('、') : '未知部门';
+            return '船票校验完成！你的航线和' + depts + '有关，先登船去星系看看吧。';
+        }
+        if (event === 'entered_system') {
+            return nextDept
+                ? '星系档案已展开。建议先去' + nextDept + '，我会帮你看哪里藏着你的年度痕迹。'
+                : '六颗星球都点亮啦，恒星报告已经在等你。';
+        }
+        if (event === 'entered_dept') {
+            var dept = ctx.currentDeptName || payload.currentDeptName || '这个部门';
+            var mine = user && user.depts && user.depts.indexOf(dept) >= 0;
+            return mine
+                ? '已抵达' + dept + '。这里有你的部门数据，我会帮你把亮点捞出来。'
+                : '已抵达' + dept + '。这颗星球记录着其他佑子的作品和活动，也可以当作灵感站。';
+        }
+        if (event === 'progress_changed') {
+            return ctx.reportUnlocked
+                ? '探索进度已满，恒星报告解锁啦！可以点击星云核心生成你的年度总结。'
+                : '探索记录已更新，还差' + ctx.remainingDeptNames.length + '站解锁恒星报告。下一站可以去' + (nextDept || '任意未探索星球') + '。';
+        }
+        if (event === 'entered_report') {
+            return '进入恒星报告模式！现在我可以帮你解读年度关键词、总结2025亮点，还能生成分享文案。';
+        }
+        if (event === 'returned_system') {
+            return ctx.reportUnlocked
+                ? '回到星系啦。星云核心已经点亮，随时可以进入最终报告。'
+                : '回到星系啦。还剩' + ctx.remainingDeptNames.length + '颗星球，继续补全探索日志吧。';
+        }
+        return '';
+    }
+
+    function notify(event, payload) {
+        payload = payload || {};
+        if (event === 'user_verified') payload.phase = 'ticket';
+        if (event === 'entered_system' || event === 'returned_system' || event === 'progress_changed') payload.phase = 'system';
+        if (event === 'entered_dept') payload.phase = 'dept';
+        if (event === 'entered_report') payload.phase = 'report';
+        syncAgentContext(payload);
+        state.knowledgeContext = '';
+        renderQuickQuestions();
+        var line = agentLineForEvent(event, payload);
+        if (line) {
+            updateMascot(event === 'entered_report' ? 'Victory' : (event === 'entered_dept' ? 'Thinking' : 'Happy'));
+            showBubble(line);
+        }
+        if (state.isOpen && state.messages.length === 0) renderWelcome();
+    }
+
+    function askGuide(question) {
+        if (!question || state.isLoading) return;
+        if (!els.panel || !els.input) {
+            setTimeout(function () { askGuide(question); }, 250);
+            return;
+        }
+        if (!state.isOpen) togglePanel(true);
+        setTimeout(function () {
+            sendMessage(question);
+        }, 60);
+    }
+
 
     function buildKnowledgeContext() {
         if (typeof DB === 'undefined' || !Array.isArray(DB) || DB.length === 0) {
             return '（暂无数据，Excel尚未上传）';
         }
 
-        var cacheKey = 'mascot_kb_' + DB.length;
-        var cached = sessionStorage.getItem(cacheKey);
-        if (cached) return cached;
+        var ctx = syncAgentContext();
+        var user = safeReadCurrentUser();
+        var cacheKey = [
+            'mascot_kb_v2',
+            DB.length,
+            ctx.phase,
+            ctx.currentDeptName || '-',
+            ctx.visitedDeptIds.join(',') || '-',
+            user && user.name ? user.name : 'guest'
+        ].join('_');
+        try {
+            var cached = sessionStorage.getItem(cacheKey);
+            if (cached) return cached;
+        } catch (e) { /* ignore */ }
 
         var lines = [];
+        lines.push('## 当前向导场景');
+        lines.push(formatAgentContext(ctx));
+
+        lines.push('');
         lines.push('## 社团概况');
         lines.push('总人数: ' + DB.length);
 
-        // 部门统计
         var deptCounts = {};
         DB.forEach(function (u) {
             (u.depts || []).forEach(function (d) { deptCounts[d] = (deptCounts[d] || 0) + 1; });
@@ -4364,66 +4690,87 @@ window.closeLightbox = closeLightbox;
         }).join(', ');
         if (deptLine) lines.push('部门分布: ' + deptLine);
 
-        // 活跃度
         var totalAct = 0, maxAct = { name: '', count: 0 };
         DB.forEach(function (u) {
-            var c = (u.stats && u.stats.activityCount) || 0;
+            var c = (u.stats && Number(u.stats.activityCount)) || 0;
             totalAct += c;
             if (c > maxAct.count) maxAct = { name: u.name, count: c };
         });
         lines.push('平均活动次数: ' + (totalAct / DB.length).toFixed(1));
         if (maxAct.name) lines.push('最活跃成员: ' + maxAct.name + ' (' + maxAct.count + '次)');
 
-        lines.push('');
-        lines.push('## 全体成员数据');
-        DB.forEach(function (u) {
-            var p = ['【' + u.name + '】'];
-            p.push('入社:' + (u.joinTime || '未知'));
-            if (u.depts && u.depts.length) p.push('部门:' + u.depts.join('/'));
-            if (u.stats) {
-                if (u.stats.activityCount) p.push('活动' + u.stats.activityCount + '次');
-                if (u.stats.activityLevel) p.push('活跃Lv' + u.stats.activityLevel);
-            }
-            if (u.deptData) {
-                Object.keys(u.deptData).forEach(function (dn) {
-                    var dd = u.deptData[dn]; if (!dd) return;
-                    if (dd.stats1 > 0) p.push(dn + dd.stats1Name + ':' + dd.stats1);
-                    if (dd.stats2 > 0) p.push(dn + dd.stats2Name + ':' + dd.stats2);
-                    if (dd.stats2Raw && dd.stats2Name === '最爱的歌') p.push('最爱的歌:' + dd.stats2Raw);
-                });
-            }
-            if (u.commonData) {
-                if (u.commonData.ip) p.push('IP:' + u.commonData.ip);
-                if (u.commonData.keyword) p.push('关键词:' + u.commonData.keyword);
-                if (u.commonData.memorableQuote) p.push('难忘的话:' + u.commonData.memorableQuote);
-            }
-            if (u.analysis && u.analysis.activityPercent !== undefined) {
-                p.push('活跃度超过' + u.analysis.activityPercent + '%的成员');
-            }
-            lines.push(p.join(' | '));
-        });
-
-        // IP 热门
         var ipC = {};
-        DB.forEach(function (u) { if (u.ip) ipC[u.ip] = (ipC[u.ip] || 0) + 1; });
+        DB.forEach(function (u) {
+            var ip = getUserPrimaryIp(u);
+            if (ip) ipC[ip] = (ipC[ip] || 0) + 1;
+        });
         var hotIPs = Object.keys(ipC).filter(function (k) { return ipC[k] > 1; })
             .sort(function (a, b) { return ipC[b] - ipC[a]; }).slice(0, 10);
         if (hotIPs.length) {
-            lines.push(''); lines.push('## 热门IP');
-            hotIPs.forEach(function (ip) { lines.push(ip + ': ' + ipC[ip] + '人'); });
+            lines.push('热门IP: ' + hotIPs.map(function (ip) { return ip + '(' + ipC[ip] + ')'; }).join('、'));
         }
 
-        // 关键词热门
         var kwC = {};
         DB.forEach(function (u) {
-            (u.keywords || []).forEach(function (k) { if (k) kwC[k] = (kwC[k] || 0) + 1; });
+            var k = getUserPrimaryKeyword(u);
+            if (k) kwC[k] = (kwC[k] || 0) + 1;
+            (u.keywords || []).forEach(function (kw) { if (kw) kwC[kw] = (kwC[kw] || 0) + 1; });
         });
-        var hotKW = Object.keys(kwC).sort(function (a, b) { return kwC[b] - kwC[a]; }).slice(0, 15);
+        var hotKW = Object.keys(kwC).sort(function (a, b) { return kwC[b] - kwC[a]; }).slice(0, 12);
         if (hotKW.length) {
-            lines.push(''); lines.push('## 热门关键词');
-            hotKW.forEach(function (k) { lines.push(k + ': ' + kwC[k] + '人'); });
+            lines.push('热门关键词: ' + hotKW.map(function (kw) { return kw + '(' + kwC[kw] + ')'; }).join('、'));
         }
 
+        lines.push('');
+        lines.push('## 当前用户重点数据');
+        if (user) {
+            lines.push(summarizeUser(user));
+            if (user.deptData) {
+                Object.keys(user.deptData).forEach(function (dn) {
+                    var dd = user.deptData[dn]; if (!dd) return;
+                    var p = [dn];
+                    if (dd.stats1 !== undefined && dd.stats1 !== '') p.push((dd.stats1Name || '指标1') + ':' + dd.stats1);
+                    if (dd.stats2 !== undefined && dd.stats2 !== '') p.push((dd.stats2Name || '指标2') + ':' + (dd.stats2Raw || dd.stats2));
+                    if (dd.images && dd.images.length) p.push('作品/照片:' + dd.images.length + '项');
+                    lines.push(p.join(' | '));
+                });
+            }
+        } else {
+            lines.push('未登录用户：优先引导输入姓名或使用佑子游客模式。');
+        }
+
+        if (ctx.currentDeptName) {
+            var deptMembers = DB.filter(function (u) {
+                return u.depts && u.depts.indexOf(ctx.currentDeptName) >= 0;
+            });
+            var photoCount = 0;
+            var stat1Total = 0, stat1Count = 0, stat2Total = 0, stat2Count = 0;
+            deptMembers.forEach(function (u) {
+                var dd = u.deptData && u.deptData[ctx.currentDeptName];
+                if (!dd) return;
+                if (dd.images) photoCount += dd.images.length;
+                var s1 = Number(dd.stats1);
+                var s2 = Number(dd.stats2);
+                if (!isNaN(s1)) { stat1Total += s1; stat1Count++; }
+                if (!isNaN(s2)) { stat2Total += s2; stat2Count++; }
+            });
+            lines.push('');
+            lines.push('## 当前部门摘要');
+            lines.push(ctx.currentDeptName + ': ' + deptMembers.length + '名成员, ' + photoCount + '项作品/照片');
+            if (stat1Count) lines.push('部门指标1平均: ' + (stat1Total / stat1Count).toFixed(1));
+            if (stat2Count) lines.push('部门指标2平均: ' + (stat2Total / stat2Count).toFixed(1));
+            if (user && user.depts && user.depts.indexOf(ctx.currentDeptName) >= 0) {
+                lines.push('当前用户属于该部门：回答时优先解读TA在本部门的数据和作品。');
+            } else {
+                lines.push('当前用户不属于该部门：回答时以参观、灵感和社团全景为主。');
+            }
+        }
+
+        lines.push('');
+        lines.push('## 下一步建议依据');
+        lines.push(ctx.reportUnlocked
+            ? '恒星报告已解锁，应引导点击星云核心或解读最终报告。'
+            : '未探索部门: ' + (ctx.remainingDeptNames.length ? ctx.remainingDeptNames.join('、') : '无'));
         var result = lines.join('\n');
         try { sessionStorage.setItem(cacheKey, result); } catch (e) { /* ignore */ }
         return result;
@@ -4433,9 +4780,8 @@ window.closeLightbox = closeLightbox;
 
     function updateMascot(emotion) {
         state.currentEmotion = emotion || 'Normal';
-        var src = emotionSrc();
-        if (els.btnImg) els.btnImg.src = src;
-        if (els.headerImg) els.headerImg.src = src;
+        applyMascotImage(els.btnImg, state.currentEmotion);
+        applyMascotImage(els.headerImg, state.currentEmotion);
     }
 
     function determineEmotion(text) {
@@ -4630,7 +4976,7 @@ window.closeLightbox = closeLightbox;
         resetIdleTimer();
         updateMascot('Thinking');
 
-        
+
         var cached = getQACache(text);
         if (cached) {
             state.messages.push({ role: 'assistant', content: cached });
@@ -4644,16 +4990,11 @@ window.closeLightbox = closeLightbox;
         state.isLoading = true;
         updateInputUI();
 
-        // 刷新知识库
-        if (!state.knowledgeContext || state.knowledgeContext.indexOf('暂无数据') >= 0) {
-            state.knowledgeContext = buildKnowledgeContext();
-        }
-
+        // 每次请求都刷新场景知识库，避免"下一站"等问题命中旧阶段上下文
+        state.knowledgeContext = buildKnowledgeContext();
+        var currentCtx = syncAgentContext();
         var systemPrompt = SYSTEM_PROMPT_TEMPLATE.replace('{{KNOWLEDGE}}', state.knowledgeContext);
-        if (typeof currentUser !== 'undefined' && currentUser && currentUser.name) {
-            systemPrompt += '\n\n当前提问用户: ' + currentUser.name;
-            if (currentUser.depts) systemPrompt += ' (部门: ' + currentUser.depts.join('/') + ')';
-        }
+        systemPrompt += '\n\n=== 当前Agent上下文 ===\n' + formatAgentContext(currentCtx);
 
         var apiMessages = state.messages.slice(-20).map(function (m) {
             return { role: m.role, content: m.content };
@@ -5266,6 +5607,9 @@ window.closeLightbox = closeLightbox;
         els.clearBtn= wrap.querySelector('#mascot-clear-btn');
         els.status  = wrap.querySelector('#mascot-status');
         els.quick   = wrap.querySelector('#mascot-quick');
+
+        applyMascotImage(els.btnImg, 'Normal');
+        applyMascotImage(els.headerImg, 'Normal');
     }
 
     // ── 星空生成器（真实 DOM 星星 + 流星 + 星云）───────────
@@ -5554,7 +5898,7 @@ window.closeLightbox = closeLightbox;
             '<div class="mascot-welcome">',
             '  <span class="mascot-welcome-emoji">🎀</span>',
             '  <div class="mascot-welcome-title">嗨！我是' + MASCOT_NAME + '~</div>',
-            '  <div>佐佑动漫社的AI看板娘</div>',
+            '  <div>佐佑星际报告体验向导</div>',
             '  <div style="margin-top:6px;font-size:12px;opacity:.7">' + dataStatus + '</div>',
             '</div>',
         ].join('\n');
@@ -5572,20 +5916,31 @@ window.closeLightbox = closeLightbox;
     }
 
     function renderQuickQuestions() {
-        var qs = ['社团有多少人？', '哪个部门人最多？', '谁最活跃？', '热门IP有哪些？'];
-        if (typeof currentUser !== 'undefined' && currentUser && currentUser.name) {
-            qs.push('介绍一下我的数据');
+        if (!els.quick) return;
+        var ctx = syncAgentContext();
+        var qs = [];
+        if (ctx.phase === 'system') {
+            qs = ['推荐下一颗星球', '我还差几站？', '哪个部门和我最相关？'];
+        } else if (ctx.phase === 'dept') {
+            qs = ['总结这个部门', '我在这里留下了什么？', '下一站去哪？'];
+        } else if (ctx.phase === 'report') {
+            qs = ['解读我的年度关键词', '总结我的2025亮点', '生成一句分享文案'];
+        } else if (ctx.phase === 'ticket') {
+            qs = ['解释我的船票', '我的部门航线是什么？', '启航后先去哪？'];
+        } else {
+            qs = ['社团有多少人？', '哪个部门人最多？', '热门IP有哪些？'];
         }
         els.quick.innerHTML = qs.map(function (q) {
             return '<button class="mascot-quick-btn" data-q="' + escapeHtml(q) + '">' + escapeHtml(q) + '</button>';
         }).join('');
+        els.quick.style.display = 'flex';
     }
 
     function renderMessages() {
         if (state.messages.length === 0) { renderWelcome(); return; }
 
         // 同步面板头部迷你头像到当前情感
-        if (els.headerImg) els.headerImg.src = emotionSrc();
+        applyMascotImage(els.headerImg, state.currentEmotion);
 
         var html = '';
         state.messages.forEach(function (msg) {
@@ -5604,7 +5959,15 @@ window.closeLightbox = closeLightbox;
             }
         });
         els.messages.innerHTML = html;
-        els.quick.style.display = 'none';
+        renderQuickQuestions();
+    }
+
+    function installPublicAgentApi() {
+        window.YouziAgent = {
+            notify: notify,
+            getContext: function () { return syncAgentContext(); },
+            askGuide: askGuide
+        };
     }
 
     // ── 初始化 ───────────────────────────────────────────────
@@ -5633,6 +5996,8 @@ window.closeLightbox = closeLightbox;
             showBubble('学长，需要向佑子了解和社团有关的事吗');
         }, 1200);
     }
+
+    installPublicAgentApi();
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
@@ -5666,11 +6031,11 @@ const TextureFactory = {
         const ctx = canvas.getContext('2d');
         return { canvas, ctx, center: size/2 };
     },
-    
+
     dance_refined: (c1, c2) => {
         const { canvas, ctx, center } = TextureFactory.createBase();
         const grad = ctx.createRadialGradient(center, center, 0, center, center, center);
-        grad.addColorStop(0, '#c8a898'); grad.addColorStop(1, '#8b6e62'); 
+        grad.addColorStop(0, '#c8a898'); grad.addColorStop(1, '#8b6e62');
         ctx.fillStyle = grad; ctx.fillRect(0,0,512,512);
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'; ctx.lineWidth = 0.5;
         for(let i=0; i<512; i+=4) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,512); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(512,i); ctx.stroke(); }
@@ -5684,7 +6049,7 @@ const TextureFactory = {
     cos_refined: (c1, c2) => {
         const { canvas, ctx, center } = TextureFactory.createBase();
         const grad = ctx.createRadialGradient(center, center, 0, center, center, center);
-        grad.addColorStop(0, '#d89fbf'); grad.addColorStop(0.6, '#7a4d54'); grad.addColorStop(1, '#4a2533'); 
+        grad.addColorStop(0, '#d89fbf'); grad.addColorStop(0.6, '#7a4d54'); grad.addColorStop(1, '#4a2533');
         ctx.fillStyle = grad; ctx.fillRect(0,0,512,512);
         ctx.fillStyle = 'rgba(255, 248, 220, 0.15)'; for(let i=0; i<4000; i++) { ctx.fillRect(Math.random()*512, Math.random()*512, 2, 2); }
         ctx.fillStyle = 'rgba(248, 224, 230, 0.7)'; for(let i=0; i<600; i++) { const r = 1 + Math.random(); ctx.beginPath(); ctx.arc(Math.random()*512, Math.random()*512, r, 0, Math.PI*2); ctx.fill(); }
@@ -5776,7 +6141,7 @@ class Starship {
         this.active = false;
         this.group = new THREE.Group();
         scene.add(this.group);
-        
+
         // --- 比例修正: 缩小飞船以避免在近景时看起来比星球还大 ---
         this.group.scale.set(0.25, 0.25, 0.25);
 
@@ -5786,10 +6151,10 @@ class Starship {
 
         // 材质定义
         const matWhite = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        const matBlue = new THREE.MeshBasicMaterial({ color: 0x007ACC }); 
+        const matBlue = new THREE.MeshBasicMaterial({ color: 0x007ACC });
         const matDark = new THREE.MeshBasicMaterial({ color: 0x222222 });
         const matYellow = new THREE.MeshBasicMaterial({ color: 0xFFD700 });
-        const matGlass = new THREE.MeshBasicMaterial({ color: 0x111111 }); 
+        const matGlass = new THREE.MeshBasicMaterial({ color: 0x111111 });
 
         // 1. 机身主体 (Main Hull)
         // 1.1 机头 (Nose)
@@ -5815,15 +6180,15 @@ class Starship {
 
         // 2. 侧面大型引擎舱 (Side Pontoons) - 关键特征
         const pontoonGeo = new THREE.BoxGeometry(0.7, 0.7, 2.5);
-        
+
         // 左侧引擎
         const engineL = new THREE.Group();
         engineL.position.set(1.6, -0.2, -0.5);
-        
+
         // 主体
         const pMesh = new THREE.Mesh(pontoonGeo, matWhite);
         engineL.add(pMesh);
-        
+
         // 前端进气口 (Blue)
         const intakeGeo = new THREE.BoxGeometry(0.75, 0.75, 0.2);
         intakeGeo.translate(0, 0, 1.25);
@@ -5858,7 +6223,7 @@ class Starship {
 
         // 4. 推进系统 (Thrusters)
         const glowMat = new THREE.SpriteMaterial({ map: glowTex, color: 0x00AAFF, transparent: true, blending: THREE.AdditiveBlending });
-        
+
         // 主喷口
         this.mainJet = new THREE.Sprite(glowMat);
         this.mainJet.scale.set(1.5, 1.5, 1);
@@ -5875,14 +6240,14 @@ class Starship {
         // 5. 拖尾系统
         this.trailParticles = [];
         const trailGeo = new THREE.BufferGeometry();
-        const trailPos = new Float32Array(90 * 3); 
+        const trailPos = new Float32Array(90 * 3);
         trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPos, 3));
         // 缩小粒子尺寸以匹配缩小的飞船
         const trailMat = new THREE.PointsMaterial({ size: 0.15, color: 0x00AAFF, transparent: true, opacity: 0.6, map: glowTex, blending: THREE.AdditiveBlending, depthWrite: false });
         this.trailSystem = new THREE.Points(trailGeo, trailMat);
-        scene.add(this.trailSystem); 
-        
-        this.floatTick = 0; 
+        scene.add(this.trailSystem);
+
+        this.floatTick = 0;
 
         this.state = 'orbiting';
         this.orbitCenter = new THREE.Vector3(0, 20, 0);
@@ -5913,7 +6278,7 @@ class Starship {
         // 到达后显示部门页面
         this.onArrival = () => { showDeptPage(this.targetDeptId); };
     }
-    
+
     returnToOrbit() {
         this.isFollowing = false;
         this.state = 'orbiting';
@@ -5932,9 +6297,9 @@ class Starship {
     update(time, delta) {
         // 机体动画: 旋转环加速 & 喷口脉冲
         this.floatTick += delta;
-        if(this.rotor) this.rotor.rotation.z -= delta * 15; 
+        if(this.rotor) this.rotor.rotation.z -= delta * 15;
         if(this.mainJet) this.mainJet.scale.setScalar(2.0 + Math.sin(time * 30) * 0.5);
-        
+
         // 待机时的微动 (hullGroup)
         if (this.state === 'orbiting' && this.hullGroup) {
             this.hullGroup.rotation.z = Math.sin(this.floatTick) * 0.1;
@@ -5960,7 +6325,7 @@ class Starship {
                 this.group.position.copy(point);
                 const nextPoint = this.path.getPoint(Math.min(this.progress + 0.05, 1));
                 this.group.lookAt(nextPoint);
-                
+
                 // 飞行侧倾特效
                 if(this.hullGroup) {
                      const turnFactor = (this.path.getPoint(Math.min(this.progress + 0.1, 1)).x - point.x) * 2;
@@ -5983,7 +6348,7 @@ class Starship {
                 this.group.position.y = this.orbitCenter.y + Math.sin(time * 2) * 0.5;
                 this.group.position.z = this.orbitCenter.z + Math.sin(orbitAngle) * orbitDist;
                 this.group.lookAt(this.targetPlanet.group.position);
-                
+
                 const camTargetPos = this.targetPlanet.group.position.clone().add(new THREE.Vector3(0, 5, 15));
                 camera.position.lerp(camTargetPos, 0.05);
                 camera.lookAt(this.targetPlanet.group.position);
@@ -5994,7 +6359,7 @@ class Starship {
                 this.group.position.x = Math.cos(orbitAngle) * orbitDist;
                 this.group.position.y = this.orbitCenter.y + Math.sin(time * 2) * 0.5;
                 this.group.position.z = Math.sin(orbitAngle) * orbitDist;
-                
+
                 // 面向切线方向
                 const nextX = Math.cos(orbitAngle + 0.1) * orbitDist;
                 const nextZ = Math.sin(orbitAngle + 0.1) * orbitDist;
@@ -6007,22 +6372,22 @@ class Starship {
     updateTrail() {
         const positions = this.trailSystem.geometry.attributes.position.array;
         const count = positions.length / 3;
-        
+
         // 移动所有点向后 (shift right)
         for(let i = count - 1; i > 0; i--) {
             positions[i*3] = positions[(i-1)*3];
             positions[i*3+1] = positions[(i-1)*3+1];
             positions[i*3+2] = positions[(i-1)*3+2];
         }
-        
+
         // 新点: 引擎尾部世界坐标
         const tailPos = new THREE.Vector3(0, 0, -2.5);
         tailPos.applyMatrix4(this.group.matrixWorld); // 转换为世界坐标
-        
+
         positions[0] = tailPos.x + (Math.random()-0.5)*0.2;
         positions[1] = tailPos.y + (Math.random()-0.5)*0.2;
         positions[2] = tailPos.z + (Math.random()-0.5)*0.2;
-        
+
         this.trailSystem.geometry.attributes.position.needsUpdate = true;
     }
 }
@@ -6054,7 +6419,7 @@ function init3D() {
     // 背景星空 - 基础星尘 (更深邃，透明度降低)
     const starGeo = new THREE.BufferGeometry(); const starPos = []; const starSizes = [];
     for(let i=0; i<CONFIG.starCount; i++){
-        const r = 20 + Math.random() * 150; const th = Math.random() * Math.PI * 2; const y = (Math.random()-0.5) * 100; 
+        const r = 20 + Math.random() * 150; const th = Math.random() * Math.PI * 2; const y = (Math.random()-0.5) * 100;
         starPos.push(r*Math.cos(th), y, r*Math.sin(th)); starSizes.push(Math.random() > 0.9 ? 0.6 : 0.2);
     }
     starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3)); starGeo.setAttribute('size', new THREE.Float32BufferAttribute(starSizes, 1));
@@ -6064,8 +6429,8 @@ function init3D() {
     // 稀疏高亮微星 (减少数量，增加亮度，营造极简感)
     const brightStarGeo = new THREE.BufferGeometry(); const brightStarPos = [];
     for(let i=0; i<CONFIG.brightStarCount * 0.6; i++){ // 减少40%的高亮星星
-        const r = 55 + Math.random() * 250; const th = Math.random() * Math.PI * 2; const y = (Math.random()-0.5) * 150; 
-        brightStarPos.push(r*Math.cos(th), y, r*Math.sin(th)); 
+        const r = 55 + Math.random() * 250; const th = Math.random() * Math.PI * 2; const y = (Math.random()-0.5) * 150;
+        brightStarPos.push(r*Math.cos(th), y, r*Math.sin(th));
     }
     brightStarGeo.setAttribute('position', new THREE.Float32BufferAttribute(brightStarPos, 3));
     brightStars = new THREE.Points(brightStarGeo, new THREE.PointsMaterial({ size: 0.5, color: 0xffffff, transparent:true, opacity: 0.8, map: glowTex, depthWrite:false, blending: THREE.AdditiveBlending }));
@@ -6111,7 +6476,7 @@ function init3D() {
     DEPARTMENTS.forEach((dept, deptIndex) => {
         const grp = new THREE.Group();
         const x = Math.cos(dept.angle) * CONFIG.orbitRadius; const z = Math.sin(dept.angle) * CONFIG.orbitRadius;
-        grp.position.set(x, 0, z); 
+        grp.position.set(x, 0, z);
         scene.add(grp);
 
         let map;
@@ -6125,7 +6490,7 @@ function init3D() {
             default: map = TextureFactory.createBase().canvas;
         }
         const sphere = new THREE.Mesh(new THREE.SphereGeometry(dept.scale*0.5, 32, 32), new THREE.MeshBasicMaterial({ map: map }));
-        sphere.userData = { id: dept.id, isPlanet: true, group: grp }; 
+        sphere.userData = { id: dept.id, isPlanet: true, group: grp };
         grp.add(sphere);
         interactables.push(sphere);
 
@@ -6138,15 +6503,15 @@ function init3D() {
             if(dept.ringType === 'dance_trajectory') ringMap = TextureFactory.dance_trajectory(dept.color2);
             else if(dept.ringType === 'dual_layer') ringMap = TextureFactory.dual_layer(dept.color, dept.color2);
             else ringMap = TextureFactory.ring(dept.ringType, dept.color2);
-            
+
             const rSize = dept.id === 'cos' ? dept.scale * 3.2 : (dept.id === 'dance' ? dept.scale * 3.0 : dept.scale * 3.5);
             const ringGeo = new THREE.PlaneGeometry(rSize, rSize);
             const ringMat = new THREE.MeshBasicMaterial({ map: ringMap, transparent: true, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.8 });
             const ring = new THREE.Mesh(ringGeo, ringMat);
             ring.rotation.x = Math.PI / 2 + 0.3;
             decorationGroup.add(ring);
-        } 
-        
+        }
+
         // Satellite logic
         if (dept.hasSatellites) {
             for(let i=0; i<dept.satCount; i++) {
@@ -6187,7 +6552,7 @@ function init3D() {
         };
         card.addEventListener('click', (e) => { e.stopPropagation(); const idx = DEPARTMENTS.findIndex(d => d.id === dept.id); starshipObj.goToPlanet(idx); });
         document.getElementById('labels-container').appendChild(card);
-        
+
         objects.push({ group: grp, sphere: sphere, decoration: decorationGroup, glow: glow, element: card, data: dept, currentAngle: dept.angle, yOffset: Math.random() * 100, hovered: false });
     });
 
@@ -6204,12 +6569,12 @@ function init3D() {
     animate();
 }
 
-window.addEventListener('mousemove', (e) => { 
+window.addEventListener('mousemove', (e) => {
     if (!mouse) return;
-    mouse.x = (e.clientX / window.innerWidth) * 2 - 1; 
-    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1; 
+    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
     if(solarSystem && solarSystem.visible && starshipObj && !starshipObj.isFollowing) {
-        scene.rotation.y = mouse.x * 0.05; scene.rotation.x = mouse.y * 0.05; 
+        scene.rotation.y = mouse.x * 0.05; scene.rotation.x = mouse.y * 0.05;
     }
 });
 
@@ -6230,13 +6595,13 @@ function animate() {
             if(positions[i*3] > 60) positions[i*3] = -60; if(positions[i*3] < -60) positions[i*3] = 60;
             if(positions[i*3+1] > 40) positions[i*3+1] = -40; if(positions[i*3+1] < -40) positions[i*3+1] = 40;
         }
-        dustSystem.geometry.attributes.position.needsUpdate = true; 
+        dustSystem.geometry.attributes.position.needsUpdate = true;
         dustSystem.rotation.y = time * 0.02;
     }
 
     if(solarSystem && solarSystem.visible && raycaster && mouse) {
         hubMesh.rotation.y -= 0.005;
-        
+
         raycaster.setFromCamera(mouse, camera);
         const intersects = raycaster.intersectObjects(interactables);
         const hoveredObj = intersects.length > 0 ? intersects[0].object : null;
@@ -6244,7 +6609,7 @@ function animate() {
 
         objects.forEach(obj => {
             obj.currentAngle += CONFIG.orbitSpeed * 0.01;
-            const newX = Math.cos(obj.currentAngle) * CONFIG.orbitRadius; 
+            const newX = Math.cos(obj.currentAngle) * CONFIG.orbitRadius;
             const newZ = Math.sin(obj.currentAngle) * CONFIG.orbitRadius;
             obj.group.position.set(newX, 0, newZ);
 
@@ -6253,9 +6618,9 @@ function animate() {
             obj.sphere.rotation.y += 0.01 * rotSpeed;
 
             obj.decoration.children.forEach(child => {
-                if (child.type === 'Mesh' && child.geometry.type === 'PlaneGeometry') { 
-                     if (child.geometry.parameters.width > 2) { child.rotation.z -= isHovered ? 0.02 : 0.005; } 
-                     else if(child.userData.angle !== undefined) { 
+                if (child.type === 'Mesh' && child.geometry.type === 'PlaneGeometry') {
+                     if (child.geometry.parameters.width > 2) { child.rotation.z -= isHovered ? 0.02 : 0.005; }
+                     else if(child.userData.angle !== undefined) {
                          child.userData.angle += child.userData.speed * (isHovered ? 2 : 1);
                          child.position.x = Math.cos(child.userData.angle) * child.userData.radius;
                          child.position.z = Math.sin(child.userData.angle) * child.userData.radius;
@@ -6285,7 +6650,7 @@ function animate() {
         });
 
         starshipObj.update(time, 0.016);
-        
+
         // 更新太阳卡片位置
         const sunCard = document.getElementById('sun-card');
         if(sunCard && !starshipObj.isFollowing) {
@@ -6330,14 +6695,14 @@ window.addEventListener('resize', () => {
     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
-    
+
     // 检测点击太阳
     const sunIntersects = raycaster.intersectObject(hubMesh);
     if(sunIntersects.length > 0) {
         showReport();
         return;
     }
-    
+
     // 检测点击星球
     const planetIntersects = raycaster.intersectObjects(interactables);
     if(planetIntersects.length > 0) {
@@ -6349,7 +6714,7 @@ window.addEventListener('resize', () => {
         }
         return;
     }
-    
+
     // 如果飞船正在跟随某个星球，点击空白区域返回概览
     if(starshipObj.isFollowing) {
         // 点击的是空白区域，返回概览
@@ -6371,7 +6736,7 @@ function initCursorTrail() {
     cursorComet.className = 'cursor-comet';
     cursorComet.style.opacity = '0';
     document.body.appendChild(cursorComet);
-    
+
     // 创建拖尾粒子
     for (let i = 0; i < 8; i++) {
         const tail = document.createElement('div');
@@ -6382,28 +6747,28 @@ function initCursorTrail() {
         document.body.appendChild(tail);
         cursorTails.push({ el: tail, x: 0, y: 0 });
     }
-    
+
     // 鼠标移动事件
     document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
         cursorComet.style.left = mouseX + 'px';
         cursorComet.style.top = mouseY + 'px';
-        
+
         // 只在首页显示
-        if (!document.body.classList.contains('phase-ticket') && 
-            !document.body.classList.contains('phase-flight') && 
-            !document.body.classList.contains('phase-system') && 
+        if (!document.body.classList.contains('phase-ticket') &&
+            !document.body.classList.contains('phase-flight') &&
+            !document.body.classList.contains('phase-system') &&
             !document.body.classList.contains('phase-report')) {
             cursorComet.style.opacity = '1';
         } else {
             cursorComet.style.opacity = '0';
         }
-        
+
         // 检测与流星的碰撞
         checkMeteorCollision();
     });
-    
+
     // 拖尾动画
     function animateTails() {
         let prevX = mouseX, prevY = mouseY;
@@ -6413,24 +6778,24 @@ function initCursorTrail() {
             tail.y += (prevY - tail.y) * speed;
             tail.el.style.left = tail.x + 'px';
             tail.el.style.top = tail.y + 'px';
-            
+
             // 只在首页显示
-            if (!document.body.classList.contains('phase-ticket') && 
-                !document.body.classList.contains('phase-flight') && 
-                !document.body.classList.contains('phase-system') && 
+            if (!document.body.classList.contains('phase-ticket') &&
+                !document.body.classList.contains('phase-flight') &&
+                !document.body.classList.contains('phase-system') &&
                 !document.body.classList.contains('phase-report')) {
                 tail.el.style.opacity = (1 - i / 8) * 0.6;
             } else {
                 tail.el.style.opacity = '0';
             }
-            
+
             prevX = tail.x;
             prevY = tail.y;
         });
         requestAnimationFrame(animateTails);
     }
     animateTails();
-    
+
     // 鼠标离开窗口
     document.addEventListener('mouseleave', () => {
         cursorComet.style.opacity = '0';
@@ -6441,16 +6806,16 @@ function initCursorTrail() {
 // 检测鼠标与流星的碰撞
 function checkMeteorCollision() {
     const meteors = document.querySelectorAll('.meteor.play');
-    
+
     // 先检查当前抓取的流星是否还在范围内
     if (grabbedMeteor) {
         const rect = grabbedMeteor.getBoundingClientRect();
         const hitboxPadding = 40;
-        const stillInRange = mouseX >= rect.left - hitboxPadding && 
-                            mouseX <= rect.right + hitboxPadding && 
-                            mouseY >= rect.top - hitboxPadding && 
+        const stillInRange = mouseX >= rect.left - hitboxPadding &&
+                            mouseX <= rect.right + hitboxPadding &&
+                            mouseY >= rect.top - hitboxPadding &&
                             mouseY <= rect.bottom + hitboxPadding;
-        
+
         if (!stillInRange) {
             // 鼠标离开了抓取的流星，释放它
             grabbedMeteor.classList.remove('grabbed');
@@ -6459,19 +6824,19 @@ function checkMeteorCollision() {
             return;
         }
     }
-    
+
     // 如果没有抓取流星，检测新的碰撞
     if (!grabbedMeteor) {
         meteors.forEach(meteor => {
             if (meteor.classList.contains('grabbed')) return;
-            
+
             const rect = meteor.getBoundingClientRect();
             const hitboxPadding = 25;
-            const inRange = mouseX >= rect.left - hitboxPadding && 
-                           mouseX <= rect.right + hitboxPadding && 
-                           mouseY >= rect.top - hitboxPadding && 
+            const inRange = mouseX >= rect.left - hitboxPadding &&
+                           mouseX <= rect.right + hitboxPadding &&
+                           mouseY >= rect.top - hitboxPadding &&
                            mouseY <= rect.bottom + hitboxPadding;
-            
+
             if (inRange) {
                 meteor.classList.add('grabbed');
                 grabbedMeteor = meteor;
@@ -6510,15 +6875,15 @@ function startMeteorShower() {
         const dur = (8 + Math.random() * 4).toFixed(2);
         el.style.setProperty('--dur', dur + 's');
         el.innerHTML = `<div class="trail"></div><div class="name">${name}</div>`;
-        
+
         container.appendChild(el);
         requestAnimationFrame(() => el.classList.add('play'));
-        setTimeout(() => { 
+        setTimeout(() => {
             if (el === grabbedMeteor) {
                 grabbedMeteor = null;
                 if (cursorComet) cursorComet.classList.remove('grabbing');
             }
-            if(el.parentNode) el.remove(); 
+            if(el.parentNode) el.remove();
         }, parseFloat(dur) * 1000 + 100);
     }, 900);
 }
@@ -6535,7 +6900,7 @@ function triggerPunchAnimation() {
 
     const sparksContainer = document.getElementById('punch-sparks');
     sparksContainer.innerHTML = '';
-    
+
     // 为每个数字创建火花效果
     // 减慢打孔速度，配合激光效果
     const delays = [200, 1000, 1800, 2600];
@@ -6551,9 +6916,9 @@ function triggerPunchAnimation() {
                 spark.style.setProperty('--tx', (Math.random() - 0.5) * 60 + 'px');
                 spark.style.setProperty('--ty', (Math.random() - 0.5) * 60 + 'px');
                 // 激光火花更密集，延迟稍晚一点点匹配激光击中瞬间
-                spark.style.animationDelay = (i * 0.02 + 0.1) + 's'; 
+                spark.style.animationDelay = (i * 0.02 + 0.1) + 's';
                 sparksContainer.appendChild(spark);
-                
+
                 // 清理粒子
                 setTimeout(() => spark.remove(), 800);
             }
@@ -6580,9 +6945,9 @@ function verifyUser() {
         enterYouziGuestMode(guest);
         return;
     }
-    
+
     const user = DB.find(u => u.name.toLowerCase() === input.toLowerCase());
-    
+
     if(!user) {
         const err = document.getElementById('error-msg');
         err.innerText = "ACCESS DENIED: USER NOT FOUND";
@@ -6596,7 +6961,7 @@ function verifyUser() {
     document.getElementById('meteor-layer').innerHTML = '';
 
     document.getElementById('ticket-name').innerText = user.name;
-    
+
     // 按Excel排序显示序号 (NO.0001) - 使用findIndex确保准确
     const index = DB.findIndex(u => u.name === user.name);
     if (index !== -1) {
@@ -6608,11 +6973,15 @@ function verifyUser() {
     }
 
     document.getElementById('ticket-rank').innerText = getSeniorityTitle(user.joinTime);
-    
+
     // 更新部门显示为chips格式
     const deptsContainer = document.getElementById('ticket-depts');
     deptsContainer.innerHTML = (user.depts || []).map(d => `<span class="dept-chip">${d}</span>`).join('');
-    
+
+    if (window.YouziAgent && typeof window.YouziAgent.notify === 'function') {
+        window.YouziAgent.notify('user_verified', { user: user, visitedDeptIds: Array.from(visitedDepts) });
+    }
+
     // 触发打孔动画
     triggerPunchAnimation();
 
@@ -6641,12 +7010,12 @@ function launchShip() {
     if (brightStars && brightStars.scale) {
         tl.to(brightStars.scale, { z: 12, duration: 2, ease: "power2.in" }, "<");
     }
-    
+
     // 相机前推
     if (camera && camera.position) {
         tl.to(camera.position, { z: -50, duration: 2, ease: "power2.in" }, "<");
     }
-    
+
     // 星空渐隐
     if (bgStars && bgStars.material) {
         tl.to(bgStars.material, { opacity: 0, duration: 0.8 }, ">-0.8");
@@ -6667,7 +7036,7 @@ function launchShip() {
                 starshipObj.orbitCenter = new THREE.Vector3(0, 20, 0);
             }
         }
-        
+
         if (camera) {
             camera.position.set(0, 55, 90);
             camera.lookAt(0, 0, 0);
@@ -6707,6 +7076,9 @@ function launchShip() {
         // 初始化进度条星球点击事件
         initProgressPlanetClicks();
         ensureSystemInteractionFallback();
+        if (window.YouziAgent && typeof window.YouziAgent.notify === 'function') {
+            window.YouziAgent.notify('entered_system', { visitedDeptIds: Array.from(visitedDepts) });
+        }
     });
 }
 
@@ -6813,7 +7185,7 @@ function enterYouziGuestMode(user) {
     document.body.classList.add('phase-ticket');
     document.body.style.overflow = '';
     document.documentElement.style.overflow = '';
-    
+
     // 按常规流程展示船票，用户手动点击“启航”进入星系
     document.getElementById('ticket-name').innerText = user.name || '佑子';
     const ticketNumEl = document.getElementById('ticket-number');
@@ -6823,6 +7195,9 @@ function enterYouziGuestMode(user) {
     deptsContainer.innerHTML = (user.depts || []).map(d => '<span class="dept-chip">' + d + '</span>').join('');
     visitedDepts.clear();
     updateProgressBar();
+    if (window.YouziAgent && typeof window.YouziAgent.notify === 'function') {
+        window.YouziAgent.notify('user_verified', { user: user, visitedDeptIds: Array.from(visitedDepts) });
+    }
     triggerPunchAnimation();
 }
 
@@ -6898,6 +7273,9 @@ function showReport() {
     renderSlides(currentUser);
     document.body.classList.add('phase-report');
     setReportInteractionLock(true);
+    if (window.YouziAgent && typeof window.YouziAgent.notify === 'function') {
+        window.YouziAgent.notify('entered_report', { user: currentUser, visitedDeptIds: Array.from(visitedDepts) });
+    }
 
     if (window.reportSwiper && typeof window.reportSwiper.destroy === 'function') {
         try {
@@ -6976,7 +7354,7 @@ function showReport() {
             }
         }
     });
-    
+
     // 修复回忆墙滚动问题 - 完全禁用Swiper在回忆墙区域的滚轮控制
     setTimeout(() => {
         const memoryScrolls = document.querySelectorAll('.memory-wall-scroll');
@@ -6987,7 +7365,7 @@ function showReport() {
                 const atBottom = this.scrollTop + this.clientHeight >= this.scrollHeight - 2;
                 const scrollingUp = e.deltaY < 0;
                 const scrollingDown = e.deltaY > 0;
-                
+
                 // 只有在边界且继续向外滚动时才允许翻页
                 if ((atTop && scrollingUp) || (atBottom && scrollingDown)) {
                     // 允许翻页，但需要延迟一下防止误触
@@ -6997,7 +7375,7 @@ function showReport() {
                 e.stopPropagation();
                 e.stopImmediatePropagation();
             }, { passive: false, capture: true });
-            
+
             // 额外添加一个冒泡阶段的监听器作为保险
             el.addEventListener('wheel', function(e) {
                 const atTop = this.scrollTop <= 1;
@@ -7007,7 +7385,7 @@ function showReport() {
                 }
             }, { passive: false });
         });
-        
+
         // 同时处理整个memory-wall-slide
         const memorySlides = document.querySelectorAll('.memory-wall-slide');
         memorySlides.forEach(slide => {
@@ -7034,6 +7412,9 @@ function backToSystem() {
         ensureYouziGuestStyles();
     }
     ensureSystemInteractionFallback();
+    if (window.YouziAgent && typeof window.YouziAgent.notify === 'function') {
+        window.YouziAgent.notify('returned_system', { currentDeptName: '', visitedDeptIds: Array.from(visitedDepts) });
+    }
     // 返回星系时：如果正在播放第二首，淡出后恢复第一首
     (function() {
         var fm = document.getElementById('fireworkMusic');
@@ -7060,33 +7441,42 @@ function showDeptPage(deptId) {
     const deptName = DEPT_ID_TO_NAME[deptId];
     if (!deptName) return;
     deptClickGuardUntil = Date.now() + 900;
-    
+
     // 记录当前访问的部门
     currentVisitingDept = deptId;
-    
+
     // 收集该部门所有成员的照片 - 使用精确匹配
     const deptMembers = DB.filter(u => u.depts && u.depts.includes(deptName));
     const allImages = [];
-    
+
     DB.forEach(u => {
         // 检查该用户是否有该部门的数据
         if (u.deptData && u.deptData[deptName]) {
             const deptImages = u.deptData[deptName].images || [];
             deptImages.forEach(img => {
                 if (img && img.url) {
-                    allImages.push({ 
-                        url: img.url, 
-                        desc: img.desc || '', 
-                        author: u.name 
+                    allImages.push({
+                        url: img.url,
+                        desc: img.desc || '',
+                        author: u.name
                     });
                 }
             });
         }
     });
-    
+
     // 判断当前用户是否属于该部门
     const isInDept = currentUser.depts && currentUser.depts.includes(deptName);
-    
+    if (window.YouziAgent && typeof window.YouziAgent.notify === 'function') {
+        window.YouziAgent.notify('entered_dept', {
+            currentDeptName: deptName,
+            deptId: deptId,
+            isInDept: !!isInDept,
+            user: currentUser,
+            visitedDeptIds: Array.from(visitedDepts)
+        });
+    }
+
     // Filter images by current user
     const currentUserName = currentUser && currentUser.name ? currentUser.name : '';
     const myImages = allImages.filter(function(img) { return img.author === currentUserName; });
@@ -7094,7 +7484,7 @@ function showDeptPage(deptId) {
 
     // 生成 Grid HTML 但先不显示
     renderDeptGrid(deptId, deptName, otherImages, isInDept, deptMembers, myImages);
-    
+
     // Check if we should show the Intro Slides
     // Logic: If user is in dept, always show intro (even without data)
     const myDeptData = currentUser.deptData && currentUser.deptData[deptName];
@@ -7151,31 +7541,31 @@ function showDeptPage(deptId) {
         const canvas = document.getElementById('bgCanvas');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
-        
+
         let width, height;
         let stars = [];
         let time = 0;
-        
+
         function resize() {
             width = window.innerWidth;
             height = window.innerHeight;
             canvas.width = width;
             canvas.height = height;
         }
-        
+
         function drawStars() {
             stars.forEach(star => {
                 star.alpha += star.speed * star.dir;
                 if(star.alpha > 1) { star.alpha = 1; star.dir = -1; }
                 if(star.alpha < 0.2) { star.alpha = 0.2; star.dir = 1; }
-                
+
                 ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
                 ctx.beginPath();
                 ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
                 ctx.fill();
             });
         }
-        
+
         function drawParticles(particles, offsetX, offsetY, scale, time) {
             particles.forEach(p => {
                 const noiseX = Math.sin(time * 0.002 + p.y * 0.05) * 1.5;
@@ -7188,23 +7578,23 @@ function showDeptPage(deptId) {
                 ctx.fill();
             });
         }
-        
+
         function animate() {
             // 使用更平滑的清屏方式减少闪烁
             ctx.globalAlpha = 1;
-            ctx.fillStyle = '#050510'; 
+            ctx.fillStyle = '#050510';
             ctx.fillRect(0, 0, width, height);
-            
+
             drawStars();
             time += 16;
-            
+
             const logoY = height * 0.12;
             drawParticles(window.DRONE_DATA.logo, width / 2 + 40, logoY, 0.6, time);
 
             const charY = height * 0.55;
             const charScale = Math.max(0.8, Math.min(1.3, width / 900));
             drawParticles(window.DRONE_DATA.char, width / 2, charY, charScale, time);
-            
+
             requestAnimationFrame(animate);
         }
 
@@ -7219,7 +7609,7 @@ function showDeptPage(deptId) {
                 dir: Math.random() > 0.5 ? 1 : -1
             });
         }
-        
+
         window.addEventListener('resize', resize);
         animate();
     }
@@ -7234,7 +7624,7 @@ function showDeptPage(deptId) {
 // ================== 烟花模拟器系统 (ANNUAL KEYWORD专用) ==================
 (function() {
     'use strict';
-    
+
     // 烟花系统变量
     let fireworkInitialized = false;
     let fireworkActive = false;
@@ -7251,28 +7641,28 @@ function showDeptPage(deptId) {
     const GRAVITY = 0.9;
     const PI_2 = Math.PI * 2;
     const PI_HALF = Math.PI * 0.5;
-    
+
     // 是否已发射过当前用户的烟花
     let firstLaunchDone = false;
     // 音效开关
     let soundEnabled = true;
-    
+
     // ================== 烟花页粒子Logo系统 ==================
     let fireworkLogoCanvas, fireworkLogoCtx;
     let fireworkLogoAnimId = null;
     let fireworkLogoTime = 0;
-    
+
     function initFireworkLogo() {
         fireworkLogoCanvas = document.getElementById('fireworkLogoCanvas');
         if (!fireworkLogoCanvas || !window.DRONE_DATA || !window.DRONE_DATA.logo) return;
-        
+
         fireworkLogoCtx = fireworkLogoCanvas.getContext('2d');
-        
+
         // 固定尺寸的小 canvas
         fireworkLogoCanvas.width = 200;
         fireworkLogoCanvas.height = 120;
     }
-    
+
     function drawFireworkLogoParticles(particles, offsetX, offsetY, scale, time) {
         particles.forEach(p => {
             const noiseX = Math.sin(time * 0.002 + p.y * 0.05) * 1.5;
@@ -7285,36 +7675,36 @@ function showDeptPage(deptId) {
             fireworkLogoCtx.fill();
         });
     }
-    
+
     function animateFireworkLogo() {
         if (!fireworkLogoCanvas || !fireworkLogoCtx) return;
-        
+
         fireworkLogoCtx.clearRect(0, 0, fireworkLogoCanvas.width, fireworkLogoCanvas.height);
         fireworkLogoTime += 16;
-        
+
         // 居中在小 canvas 中 (200x120)
         const logoY = 60;
         const logoX = 100;
         // 更小的缩放比例
         drawFireworkLogoParticles(window.DRONE_DATA.logo, logoX, logoY, 0.35, fireworkLogoTime);
-        
+
         fireworkLogoAnimId = requestAnimationFrame(animateFireworkLogo);
     }
-    
+
     function startFireworkLogo() {
         if (!fireworkLogoCanvas) initFireworkLogo();
-        
+
         const container = document.getElementById('fireworkLogoContainer');
         if (container) container.style.opacity = 1;
-        
+
         if (fireworkLogoAnimId) return;
         animateFireworkLogo();
     }
-    
+
     function stopFireworkLogo() {
         const container = document.getElementById('fireworkLogoContainer');
         if (container) container.style.opacity = 0;
-        
+
         if (fireworkLogoAnimId) {
             cancelAnimationFrame(fireworkLogoAnimId);
             fireworkLogoAnimId = null;
@@ -7327,7 +7717,7 @@ function showDeptPage(deptId) {
         initialized: false,
         buffers: {},
         _lastSmallBurstTime: 0,
-        
+
         // Base64编码的音频数据
         audioData: {
             lift: "data:audio/mp3;base64,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",
@@ -7336,7 +7726,7 @@ function showDeptPage(deptId) {
             crackle: "data:audio/mp3;base64,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",
             crackleSmall: "data:audio/mp3;base64,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"
         },
-        
+
         // 音频配置
         config: {
             lift: { volume: 1, playbackRateMin: 0.85, playbackRateMax: 0.95 },
@@ -7345,13 +7735,13 @@ function showDeptPage(deptId) {
             crackle: { volume: 0.2, playbackRateMin: 1, playbackRateMax: 1 },
             crackleSmall: { volume: 0.3, playbackRateMin: 1, playbackRateMax: 1 }
         },
-        
+
         async init() {
             if (this.initialized) return;
             try {
                 this.ctx = new (window.AudioContext || window.webkitAudioContext)();
                 this.initialized = true;
-                
+
                 // 预加载所有音频
                 const loadPromises = Object.keys(this.audioData).map(async (name) => {
                     try {
@@ -7362,45 +7752,45 @@ function showDeptPage(deptId) {
                         console.warn('Failed to load audio: ' + name, e);
                     }
                 });
-                
+
                 await Promise.all(loadPromises);
             } catch (e) {
                 console.warn('Web Audio API不支持');
             }
         },
-        
+
         resume() {
             if (this.ctx && this.ctx.state === 'suspended') {
                 this.ctx.resume();
             }
         },
-        
+
         // 播放音效
         playSound(type, scale = 1) {
             if (!soundEnabled || !this.ctx || !this.buffers[type]) return;
             this.resume();
-            
+
             // 限流小爆炸声
             if (type === 'burstSmall') {
                 const now = Date.now();
                 if (now - this._lastSmallBurstTime < 20) return;
                 this._lastSmallBurstTime = now;
             }
-            
+
             const config = this.config[type];
             if (!config) return;
-            
+
             // 确保scale在有效范围内
             scale = Math.max(0, Math.min(1, scale));
-            
+
             // 随机播放速率
             const playbackRate = config.playbackRateMin + Math.random() * (config.playbackRateMax - config.playbackRateMin);
             const scaledPlaybackRate = playbackRate * (2 - scale);
             const scaledVolume = config.volume * scale;
-            
+
             const gainNode = this.ctx.createGain();
             gainNode.gain.value = scaledVolume;
-            
+
             const bufferSource = this.ctx.createBufferSource();
             bufferSource.playbackRate.value = scaledPlaybackRate;
             bufferSource.buffer = this.buffers[type];
@@ -7408,11 +7798,11 @@ function showDeptPage(deptId) {
             gainNode.connect(this.ctx.destination);
             bufferSource.start(0);
         },
-        
+
         // 兼容旧接口
         playLift() { this.playSound('lift', 1); },
-        playBurst(scale = 1) { 
-            this.playSound('burst', scale); 
+        playBurst(scale = 1) {
+            this.playSound('burst', scale);
             setTimeout(() => this.playSound('crackle', scale * 0.8), 50);
         },
         playCrackle() { this.playSound('crackle', 1); }
@@ -7430,7 +7820,7 @@ function showDeptPage(deptId) {
     const COLOR_CODES = Object.values(COLOR);
     const INVISIBLE = '_INVISIBLE_';
     const COLOR_CODES_W_INVIS = [...COLOR_CODES, INVISIBLE];
-    
+
     const COLOR_TUPLES = {};
     COLOR_CODES.forEach(hex => {
         COLOR_TUPLES[hex] = {
@@ -7439,14 +7829,14 @@ function showDeptPage(deptId) {
             b: parseInt(hex.substr(5, 2), 16)
         };
     });
-    
+
     // 粒子集合
     function createParticleCollection() {
         const collection = {};
         COLOR_CODES_W_INVIS.forEach(color => { collection[color] = []; });
         return collection;
     }
-    
+
     // Star对象
     const Star = {
         airDrag: 0.98,
@@ -7491,7 +7881,7 @@ function showDeptPage(deptId) {
             this._pool.push(instance);
         }
     };
-    
+
     // Spark对象
     const Spark = {
         drawWidth: 0.75,
@@ -7514,7 +7904,7 @@ function showDeptPage(deptId) {
         },
         returnInstance(instance) { this._pool.push(instance); }
     };
-    
+
     // BurstFlash
     const BurstFlash = {
         active: [],
@@ -7530,20 +7920,20 @@ function showDeptPage(deptId) {
         },
         returnInstance(instance) { this._pool.push(instance); }
     };
-    
+
     // 工具函数
     function randomColor() {
         return COLOR_CODES[Math.floor(Math.random() * COLOR_CODES.length)];
     }
-    
+
     function whiteOrGold() {
         return Math.random() < 0.5 ? COLOR.Gold : COLOR.White;
     }
-    
+
     function makePistilColor(shellColor) {
         return shellColor === COLOR.White || shellColor === COLOR.Gold ? randomColor() : whiteOrGold();
     }
-    
+
     // 创建粒子弧
     function createParticleArc(start, arcLength, count, randomness, particleFactory) {
         const angleDelta = arcLength / count;
@@ -7554,7 +7944,7 @@ function showDeptPage(deptId) {
             }
         }
     }
-    
+
     // 创建爆发
     function createBurst(count, particleFactory, startAngle = 0, arcLength = PI_2) {
         const R = 0.5 * Math.sqrt(count / Math.PI);
@@ -7575,7 +7965,7 @@ function showDeptPage(deptId) {
             }
         }
     }
-    
+
     // Shell类
     class Shell {
         constructor(options) {
@@ -7589,7 +7979,7 @@ function showDeptPage(deptId) {
                 this.starCount = Math.max(6, scaledSize * scaledSize * density);
             }
         }
-        
+
         launch(position, launchHeight, isCurrentUserShell = false, hasText = true) {
             const width = stageW;
             const height = stageH;
@@ -7602,14 +7992,14 @@ function showDeptPage(deptId) {
             const burstY = minHeight - launchHeight * (minHeight - vpad);
             const launchDistance = launchY - burstY;
             const launchVelocity = Math.pow(launchDistance * 0.04, 0.64);
-            
+
             // 播放升空音效
             soundManager.playLift();
-            
+
             // 保存是否为当前用户的烟花
             this.isCurrentUserShell = isCurrentUserShell;
             this.hasText = hasText;
-            
+
             const comet = this.comet = Star.add(
                 launchX, launchY,
                 typeof this.color === 'string' && this.color !== 'random' ? this.color : COLOR.White,
@@ -7627,7 +8017,7 @@ function showDeptPage(deptId) {
             }
             comet.onDeath = (comet) => this.burst(comet.x, comet.y);
         }
-        
+
         burst(x, y) {
             const speed = this.spreadSize / 96;
             let color = this.color;
@@ -7635,7 +8025,7 @@ function showDeptPage(deptId) {
             let sparkLifeVariation = 0.25;
             let onDeath = null;
             let playedDeathSound = false;
-            
+
             // 特效回调
             if (this.crossette) {
                 onDeath = (star) => {
@@ -7657,7 +8047,7 @@ function showDeptPage(deptId) {
             }
             if (this.floral) onDeath = (star) => this.floralEffect(star);
             if (this.fallingLeaves) onDeath = (star) => this.fallingLeavesEffect(star);
-            
+
             // glitter设置
             if (this.glitter === 'light') {
                 sparkFreq = 400;
@@ -7690,7 +8080,7 @@ function showDeptPage(deptId) {
                 sparkLife = 1400;
                 sparkLifeVariation = 3.8;
             }
-            
+
             const starFactory = (angle, speedMult) => {
                 const standardInitialSpeed = this.spreadSize / 1800;
                 const star = Star.add(
@@ -7721,7 +8111,7 @@ function showDeptPage(deptId) {
                     star.sparkTimer = Math.random() * star.sparkFreq;
                 }
             };
-            
+
             // 环形烟花
             if (this.ring) {
                 const ringStartAngle = Math.random() * Math.PI;
@@ -7731,7 +8121,7 @@ function showDeptPage(deptId) {
                     const initSpeedY = Math.cos(angle) * speed;
                     const newSpeed = Math.sqrt(initSpeedX * initSpeedX + initSpeedY * initSpeedY);
                     const newAngle = Math.atan2(initSpeedX, initSpeedY) + ringStartAngle;
-                    const star = Star.add(x, y, color, newAngle, newSpeed, 
+                    const star = Star.add(x, y, color, newAngle, newSpeed,
                         this.starLife + Math.random() * this.starLife * this.starLifeVariation
                     );
                     if (this.glitter && sparkFreq) {
@@ -7752,18 +8142,18 @@ function showDeptPage(deptId) {
                 color = this.color[1];
                 createBurst(this.starCount / 2, starFactory);
             }
-            
+
             // 雌蕊效果
             if (this.pistil) {
                 const pistilColor = this.pistilColor;
                 const smallerSpeed = speed * 0.5;
                 createBurst(Math.floor(this.starCount * 0.15), (angle, speedMult) => {
-                    Star.add(x, y, pistilColor, angle, speedMult * smallerSpeed, 
+                    Star.add(x, y, pistilColor, angle, speedMult * smallerSpeed,
                         this.starLife * 0.8 + Math.random() * this.starLife * 0.2
                     );
                 });
             }
-            
+
             // 流光效果
             if (this.streamers) {
                 const streamerCount = Math.floor(this.starCount * 0.3);
@@ -7779,10 +8169,10 @@ function showDeptPage(deptId) {
                     star.sparkTimer = Math.random() * 32;
                 });
             }
-            
+
             // 播放爆炸音效
             soundManager.playBurst(this.spreadSize / 400);
-            
+
             // 显示投稿人信息
             console.log('[Shell.burst] hasText:', this.hasText, 'isCurrentUserShell:', this.isCurrentUserShell);
             if(this.hasText) {
@@ -7790,10 +8180,10 @@ function showDeptPage(deptId) {
             } else {
                 console.log('[Shell.burst] hasText is false, skipping text display');
             }
-            
+
             BurstFlash.add(x, y, this.spreadSize / 4);
         }
-        
+
         // 交叉效果
         crossetteEffect(star) {
             const speed = 1.5;
@@ -7802,7 +8192,7 @@ function showDeptPage(deptId) {
                 Star.add(star.x, star.y, star.color, angle, speed, life);
             });
         }
-        
+
         // 噼啪效果
         crackleEffect(star) {
             const count = Math.floor(Math.random() * 5) + 5;
@@ -7813,12 +8203,12 @@ function showDeptPage(deptId) {
                 Spark.add(star.x, star.y, COLOR.Gold, angle, speed, sparkLife);
             }
         }
-        
+
         // 花卉效果
         floralEffect(star) {
             const count = 12 + Math.floor(Math.random() * 4);
             createBurst(count, (angle, speedMult) => {
-                const newStar = Star.add(star.x, star.y, star.color, angle, speedMult * 2.5, 
+                const newStar = Star.add(star.x, star.y, star.color, angle, speedMult * 2.5,
                     500 + Math.random() * 300
                 );
                 newStar.sparkFreq = 200;
@@ -7828,11 +8218,11 @@ function showDeptPage(deptId) {
                 newStar.sparkTimer = 0;
             });
         }
-        
+
         // 落叶效果
         fallingLeavesEffect(star) {
             createBurst(5, (angle, speedMult) => {
-                const newStar = Star.add(star.x, star.y, COLOR.Gold, angle, speedMult * 2, 
+                const newStar = Star.add(star.x, star.y, COLOR.Gold, angle, speedMult * 2,
                     1000 + Math.random() * 500
                 );
                 newStar.sparkFreq = 100;
@@ -7843,14 +8233,14 @@ function showDeptPage(deptId) {
             });
         }
     }
-    
+
     // 显示投稿人关键词文字
     let currentUserShown = false;  // 记录当前用户是否已显示
     let usedDataIndices = [];      // 记录已使用的数据索引
-    
+
     function showKeywordText(x, y, forceCurrentUser = false) {
         console.log('[showKeywordText] Called with x:', x, 'y:', y, 'forceCurrentUser:', forceCurrentUser);
-        
+
         const overlay = document.getElementById('firework-text-overlay');
         if (!overlay) {
             console.warn('[showKeywordText] Overlay element not found!');
@@ -7860,12 +8250,12 @@ function showDeptPage(deptId) {
             console.warn('[showKeywordText] No FIREWORK_KEYWORD_DATA available!');
             return;
         }
-        
+
         console.log('[showKeywordText] FIREWORK_KEYWORD_DATA length:', window.FIREWORK_KEYWORD_DATA.length);
-        
+
         let data;
         let isCurrentUser = false;
-        
+
         // 如果强制显示当前用户，或者这是第一次且当前用户存在
         if (forceCurrentUser || (!currentUserShown && window.FIREWORK_CURRENT_USER)) {
             data = window.FIREWORK_CURRENT_USER;
@@ -7883,25 +8273,25 @@ function showDeptPage(deptId) {
             usedDataIndices.push(idx);
             data = window.FIREWORK_KEYWORD_DATA[idx];
         }
-        
+
         console.log('[showKeywordText] Selected data:', data, 'isCurrentUser:', isCurrentUser);
-        
+
         const textEl = document.createElement('div');
         textEl.className = 'firework-text-item' + (isCurrentUser ? ' current-user' : '');
         textEl.innerHTML = '<span style="color:' + (isCurrentUser ? '#ff6b6b' : '#ffd700') + ';font-weight:bold;">' + data.name + '</span>：' + data.keyword;
-        
+
         // 限制位置在可视区域内
         const maxX = stageW - 150;
         const minX = 50;
         const displayX = Math.max(minX, Math.min(maxX, x - 50));
-        
+
         textEl.style.left = displayX + 'px';
         textEl.style.top = y + 'px';
-        
+
         overlay.appendChild(textEl);
-        
+
         console.log('[showKeywordText] Text element created and appended:', textEl.innerHTML, 'at position:', displayX, y);
-        
+
         // 动画结束后移除（与CSS动画时长同步为8秒）
         setTimeout(() => {
             if (textEl.parentNode) {
@@ -7909,9 +8299,9 @@ function showDeptPage(deptId) {
             }
         }, 8000);
     }
-    
+
     // Shell工厂 - 完整移植yanhua项目的所有烟花类型
-    
+
     // 菊花烟花
     function crysanthemumShell(size = 1) {
         const glitter = Math.random() < 0.25;
@@ -7935,7 +8325,7 @@ function showDeptPage(deptId) {
             streamers
         };
     }
-    
+
     // 幽灵烟花
     function ghostShell(size = 1) {
         const shell = crysanthemumShell(size);
@@ -7948,7 +8338,7 @@ function showDeptPage(deptId) {
         shell.glitter = '';
         return shell;
     }
-    
+
     // 闪烁烟花
     function strobeShell(size = 1) {
         const color = randomColor();
@@ -7967,7 +8357,7 @@ function showDeptPage(deptId) {
             pistilColor: makePistilColor(color)
         };
     }
-    
+
     // 棕榈烟花
     function palmShell(size = 1) {
         const color = randomColor();
@@ -7981,7 +8371,7 @@ function showDeptPage(deptId) {
             glitter: thick ? 'thick' : 'heavy'
         };
     }
-    
+
     // 环形烟花
     function ringShell(size = 1) {
         const color = randomColor();
@@ -8000,7 +8390,7 @@ function showDeptPage(deptId) {
             streamers: Math.random() < 0.3
         };
     }
-    
+
     // 交叉烟花
     function crossetteShell(size = 1) {
         const color = randomColor();
@@ -8016,7 +8406,7 @@ function showDeptPage(deptId) {
             pistilColor: makePistilColor(color)
         };
     }
-    
+
     // 花卉烟花
     function floralShell(size = 1) {
         return {
@@ -8029,7 +8419,7 @@ function showDeptPage(deptId) {
             floral: true
         };
     }
-    
+
     // 落叶烟花
     function fallingLeavesShell(size = 1) {
         return {
@@ -8044,7 +8434,7 @@ function showDeptPage(deptId) {
             fallingLeaves: true
         };
     }
-    
+
     // 柳树烟花
     function willowShell(size = 1) {
         return {
@@ -8057,7 +8447,7 @@ function showDeptPage(deptId) {
             color: INVISIBLE
         };
     }
-    
+
     // 噼啪烟花
     function crackleShell(size = 1) {
         const color = Math.random() < 0.75 ? COLOR.Gold : randomColor();
@@ -8075,7 +8465,7 @@ function showDeptPage(deptId) {
             pistilColor: makePistilColor(color)
         };
     }
-    
+
     // 马尾烟花
     function horsetailShell(size = 1) {
         const color = randomColor();
@@ -8091,7 +8481,7 @@ function showDeptPage(deptId) {
             strobe: color === COLOR.White
         };
     }
-    
+
     // 烟花类型列表
     const shellTypes = [
         crysanthemumShell,
@@ -8107,13 +8497,13 @@ function showDeptPage(deptId) {
         horsetailShell,
         willowShell
     ];
-    
+
     // 随机选择烟花类型
     function randomShell(size) {
         const shellFactory = shellTypes[Math.floor(Math.random() * shellTypes.length)];
         return shellFactory(size);
     }
-    
+
     function getRandomShellSize() {
         const baseSize = 3;
         const maxVariance = Math.min(2.5, baseSize);
@@ -8128,17 +8518,17 @@ function showDeptPage(deptId) {
             height: height * 0.75
         };
     }
-    
+
     // 启动烟花（从随机位置）
     // 追踪当前活跃的烟花数量(爆炸后)
     let activeShells = 0; // 追踪升空中的烟花数量
-    
+
     function launchRandomShell(hasText = true) {
         console.log('[launchRandomShell] Called with hasText:', hasText, 'activeShells:', activeShells);
         // 限制：同时存在的烟花不超过10个 (Shells + Bursts)
         // 使用 activeShells 估算升空数，使用 totalStars 估算爆炸数
         if (activeShells >= 10) return 500;
-        
+
         const size = getRandomShellSize();
         const shell = new Shell(randomShell(size.size));
         // 关键修改：第三个参数forceCurrentUser设为false，第四个参数hasText传递下去
@@ -8146,7 +8536,7 @@ function showDeptPage(deptId) {
         console.log('[launchRandomShell] Shell launched with hasText:', hasText);
         return 1200 + Math.random() * 800 + shell.starLife;
     }
-    
+
     // 启动当前用户的烟花（屏幕中央偏上，更大更醒目）
     function launchCurrentUserShell() {
         const shell = new Shell(randomShell(3.5)); // 稍大的烟花
@@ -8154,7 +8544,7 @@ function showDeptPage(deptId) {
         firstLaunchDone = true;
         return 1500 + shell.starLife;
     }
-    
+
     // 自动发射
     function seqRandomShell() {
         // 如果还没发射过当前用户的烟花，先发射
@@ -8163,7 +8553,7 @@ function showDeptPage(deptId) {
         }
         return launchRandomShell(true); // 自动发射带字
     }
-    
+
     // 点击加速发射（从随机位置发射，70%概率带文字）
     function accelerateLaunch() {
         // 用户交互时70%概率发射带文字的烟花，30%纯烟花
@@ -8174,30 +8564,30 @@ function showDeptPage(deptId) {
             setTimeout(() => launchRandomShell(hasText2), 200);
         }
     }
-    
+
     // 阅读模式专用：自动发射无文字烟花
     function launchDecorationFirework() {
         if (activeShells < 15) {
             launchRandomShell(false); // 无文字纯装饰烟花
         }
     }
-    
+
     // 暴露给阅读模式使用
     window.launchDecorationFirework = launchDecorationFirework;
-    
+
     // 更新
     function update(frameTime) {
         if (!fireworkActive) return;
-        
+
         const lag = frameTime / 16.6667;
         const timeStep = frameTime * simSpeed;
         const speed = simSpeed * lag;
         currentFrame++;
-        
+
         // 统计当前状态
         let totalStars = 0;
         activeShells = 0; // 重置并重新计数
-        
+
         COLOR_CODES_W_INVIS.forEach(color => {
             // 统计总粒子数 (炸开的)
             totalStars += Star.active[color].length;
@@ -8206,19 +8596,19 @@ function showDeptPage(deptId) {
                 if (s.heavy) activeShells++;
             });
         });
-        
+
         // 自动发射逻辑 - 速度渐进加快
         autoLaunchTime -= timeStep;
-        
+
         // 计算当前速度倍率（随时间逐渐增加，30秒内从1.0增加到3.0）
         const elapsedTime = performance.now() - fireworkStartTime;
         fireworkSpeedMultiplier = Math.min(FIREWORK_MAX_SPEED, 1.0 + (elapsedTime / FIREWORK_RAMP_DURATION) * (FIREWORK_MAX_SPEED - 1.0));
-        
+
         if (autoLaunchTime <= 0) {
             // 限制条件：
             // 1. 页面同时存在烟花 (activeShells) 不超过 20 个
             // 2. 同时炸开烟花粒子不超过 3000
-            
+
             if (activeShells < 20 && totalStars < 3000) {
                  const baseDelay = seqRandomShell();
                  // 根据速度倍率减少等待时间，让烟花发射越来越快
@@ -8227,12 +8617,12 @@ function showDeptPage(deptId) {
                  autoLaunchTime = 500 / fireworkSpeedMultiplier; // 等待时间也按倍率缩短
             }
         }
-        
+
         const starDrag = 1 - (1 - Star.airDrag) * speed;
         const starDragHeavy = 1 - (1 - Star.airDragHeavy) * speed;
         const sparkDrag = 1 - (1 - Spark.airDrag) * speed;
         const gAcc = (timeStep / 1000) * GRAVITY;
-        
+
         COLOR_CODES_W_INVIS.forEach(color => {
             // 更新星花
             const stars = Star.active[color];
@@ -8289,7 +8679,7 @@ function showDeptPage(deptId) {
                     }
                 }
             }
-            
+
             // 更新火花
             const sparks = Spark.active[color];
             for (let i = sparks.length - 1; i >= 0; i--) {
@@ -8309,22 +8699,22 @@ function showDeptPage(deptId) {
                 }
             }
         });
-        
+
         render(speed);
     }
-    
+
     // 渲染
     function render(speed) {
         if (!trailsCtx || !mainCtx) return;
-        
+
         // 渐隐效果 - 使用 destination-out 模式实现透明渐隐，保留星空背景可见
         trailsCtx.globalCompositeOperation = 'destination-out';
         trailsCtx.fillStyle = 'rgba(0, 0, 0, 0.15)';
         trailsCtx.fillRect(0, 0, stageW, stageH);
         trailsCtx.globalCompositeOperation = 'source-over';
-        
+
         mainCtx.clearRect(0, 0, stageW, stageH);
-        
+
         // 绘制爆发闪光
         while (BurstFlash.active.length) {
             const bf = BurstFlash.active.pop();
@@ -8337,9 +8727,9 @@ function showDeptPage(deptId) {
             trailsCtx.fillRect(bf.x - bf.radius, bf.y - bf.radius, bf.radius * 2, bf.radius * 2);
             BurstFlash.returnInstance(bf);
         }
-        
+
         trailsCtx.globalCompositeOperation = 'lighten';
-        
+
         // 绘制星花
         trailsCtx.lineCap = 'round';
         mainCtx.strokeStyle = '#fff';
@@ -8361,7 +8751,7 @@ function showDeptPage(deptId) {
             trailsCtx.stroke();
         });
         mainCtx.stroke();
-        
+
         // 绘制火花
         trailsCtx.lineWidth = Spark.drawWidth;
         trailsCtx.lineCap = 'butt';
@@ -8376,38 +8766,38 @@ function showDeptPage(deptId) {
             trailsCtx.stroke();
         });
     }
-    
+
     // 动画循环
     let lastTimestamp = 0;
     function animate(timestamp) {
         if (!fireworkActive) return;
-        
+
         let frameTime = timestamp - lastTimestamp;
         lastTimestamp = timestamp;
         if (frameTime < 0) frameTime = 17;
         else if (frameTime > 68) frameTime = 68;
-        
+
         update(frameTime);
         requestAnimationFrame(animate);
     }
-    
+
     // 初始化烟花
     function initFirework() {
         if (fireworkInitialized) return;
-        
+
         const slide = document.getElementById('firework-keyword-slide');
         if (!slide) return;
-        
+
         trailsCanvas = document.getElementById('firework-trails-canvas');
         mainCanvas = document.getElementById('firework-main-canvas');
         if (!trailsCanvas || !mainCanvas) return;
-        
+
         trailsCtx = trailsCanvas.getContext('2d');
         mainCtx = mainCanvas.getContext('2d');
-        
+
         // 初始化音效管理器
         soundManager.init();
-        
+
         function resize() {
             const container = slide.querySelector('.firework-canvas-container');
             if (!container) return;
@@ -8419,10 +8809,10 @@ function showDeptPage(deptId) {
             mainCanvas.width = stageW;
             mainCanvas.height = stageH;
         }
-        
+
         resize();
         window.addEventListener('resize', resize);
-        
+
         // 点击加速发射烟花（从随机位置，不是点击位置）
         slide.addEventListener('click', function(e) {
             // 恢复音频上下文（需要用户交互）
@@ -8430,40 +8820,40 @@ function showDeptPage(deptId) {
             // 加速发射烟花
             accelerateLaunch();
         });
-        
+
         fireworkInitialized = true;
     }
-    
+
     // 启动/停止烟花
     function startFirework() {
         if (!fireworkInitialized) initFirework();
         if (fireworkActive) return;
-        
+
         // 启动粒子logo
         startFireworkLogo();
-        
+
         // 验证数据
         console.log('[Fireworks] Starting fireworks...');
         console.log('[Fireworks] FIREWORK_KEYWORD_DATA:', window.FIREWORK_KEYWORD_DATA ? window.FIREWORK_KEYWORD_DATA.length : 'undefined');
         console.log('[Fireworks] FIREWORK_CURRENT_USER:', window.FIREWORK_CURRENT_USER);
-        
+
         // 切换到烟花音乐
         switchToFireworkMusic();
-        
+
         // 重置状态以便每次进入页面都先显示当前用户
         firstLaunchDone = false;
         currentUserShown = false;
-        
+
         // 初始化速度渐进系统
         fireworkStartTime = performance.now();
         fireworkSpeedMultiplier = 1.0;
-        
+
         fireworkActive = true;
         lastTimestamp = performance.now();
         autoLaunchTime = 500;
         requestAnimationFrame(animate);
     }
-    
+
     function stopFirework() {
         fireworkActive = false;
         // 停止粒子logo
@@ -8471,16 +8861,16 @@ function showDeptPage(deptId) {
         // 切换回普通背景音乐
         switchToNormalMusic();
     }
-    
+
     // 音乐切换函数（第二首音乐已在进入报告时播放，烟花页不再额外切换）
     function switchToFireworkMusic() {
         // 第二首音乐已在 showReport() 中淡入播放，无需再次切换
     }
-    
+
     function switchToNormalMusic() {
         // 返回星系时由 backToSystem() 处理音乐恢复，无需额外操作
     }
-    
+
     // 监听swiper滑动事件
     function setupSwiperObserver() {
         if (!hasLoadedReportData()) return;
@@ -8493,12 +8883,12 @@ function showDeptPage(deptId) {
                 stopFirework();
             }
         });
-        
+
         const slidesContainer = document.getElementById('slides-container');
         if (slidesContainer) {
             observer.observe(slidesContainer, { attributes: true, subtree: true, attributeFilter: ['class'] });
         }
-        
+
         // 初始检查
         setTimeout(function() {
             const activeSlide = document.querySelector('.swiper-slide-active');
@@ -8507,7 +8897,7 @@ function showDeptPage(deptId) {
             }
         }, 1000);
     }
-    
+
     // 页面加载后初始化
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
@@ -8522,7 +8912,7 @@ function showDeptPage(deptId) {
 // ================== 3D星图系统 (Soul Resonance) ==================
 (function() {
     'use strict';
-    
+
     // 霓虹色盘
     const PALETTE = [
         0x00f3ff, // 青
@@ -8531,7 +8921,7 @@ function showDeptPage(deptId) {
         0x00ff99, // 绿
         0xffd700, // 金
     ];
-    
+
     let nebulaScene, nebulaCamera, nebulaRenderer, nebulaLabelRenderer;
     let nebulaControls, constellationGroup, dustLayer;
     let nebulaCloud1, nebulaCloud2; // 星云粒子层
@@ -8539,7 +8929,7 @@ function showDeptPage(deptId) {
     let nebulaRaycaster, nebulaMouse;
     let nebulaAnimationId = null;
     let isNebulaActive = false;
-    
+
     // CSS2DRenderer 和 CSS2DObject 内联实现 (避免模块加载问题)
     class CSS2DObject extends THREE.Object3D {
         constructor(element) {
@@ -8558,7 +8948,7 @@ function showDeptPage(deptId) {
         }
     }
     CSS2DObject.prototype.isCSS2DObject = true;
-    
+
     class CSS2DRenderer {
         constructor() {
             const _this = this;
@@ -8570,13 +8960,13 @@ function showDeptPage(deptId) {
             const _viewProjectionMatrix = new THREE.Matrix4();
             const _a = new THREE.Vector3();
             const _b = new THREE.Vector3();
-            
+
             const domElement = document.createElement('div');
             domElement.style.overflow = 'hidden';
             this.domElement = domElement;
-            
+
             this.getSize = function() { return { width: _width, height: _height }; };
-            
+
             this.render = function(scene, camera) {
                 if (scene.autoUpdate === true) scene.updateMatrixWorld();
                 if (camera.parent === null) camera.updateMatrixWorld();
@@ -8585,14 +8975,14 @@ function showDeptPage(deptId) {
                 renderObject(scene, scene, camera);
                 zOrder(scene);
             };
-            
+
             this.setSize = function(width, height) {
                 _width = width; _height = height;
                 _widthHalf = _width / 2; _heightHalf = _height / 2;
                 domElement.style.width = width + 'px';
                 domElement.style.height = height + 'px';
             };
-            
+
             function renderObject(object, scene, camera) {
                 if (object.isCSS2DObject) {
                     _vector.setFromMatrixPosition(object.matrixWorld);
@@ -8612,13 +9002,13 @@ function showDeptPage(deptId) {
                     renderObject(object.children[i], scene, camera);
                 }
             }
-            
+
             function getDistanceToSquared(object1, object2) {
                 _a.setFromMatrixPosition(object1.matrixWorld);
                 _b.setFromMatrixPosition(object2.matrixWorld);
                 return _a.distanceToSquared(_b);
             }
-            
+
             function zOrder(scene) {
                 const sorted = filterAndFlatten(scene).sort(function(a, b) {
                     const distanceA = cache.objects.get(a).distanceToCameraSquared;
@@ -8630,7 +9020,7 @@ function showDeptPage(deptId) {
                     sorted[i].element.style.zIndex = zMax - i;
                 }
             }
-            
+
             function filterAndFlatten(scene) {
                 const result = [];
                 scene.traverse(function(object) {
@@ -8640,7 +9030,7 @@ function showDeptPage(deptId) {
             }
         }
     }
-    
+
     function createStarTexture() {
         const canvas = document.createElement('canvas');
         canvas.width = 32; canvas.height = 32;
@@ -8653,7 +9043,7 @@ function showDeptPage(deptId) {
         ctx.fillRect(0, 0, 32, 32);
         return new THREE.CanvasTexture(canvas);
     }
-    
+
     function createBackgroundLayer(count, size, range, starTexture) {
         const geo = new THREE.BufferGeometry();
         const pos = [];
@@ -8671,7 +9061,7 @@ function showDeptPage(deptId) {
         });
         return new THREE.Points(geo, mat);
     }
-    
+
     // 创建星云效果
     function createNebulaCloud(color, range, count) {
         const canvas = document.createElement('canvas');
@@ -8685,7 +9075,7 @@ function showDeptPage(deptId) {
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, 64, 64);
         const texture = new THREE.CanvasTexture(canvas);
-        
+
         const geo = new THREE.BufferGeometry();
         const pos = [];
         const sizes = [];
@@ -8701,7 +9091,7 @@ function showDeptPage(deptId) {
             sizes.push(30 + Math.random() * 80);
         }
         geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-        
+
         const mat = new THREE.PointsMaterial({
             size: 50,
             map: texture,
@@ -8713,7 +9103,7 @@ function showDeptPage(deptId) {
         });
         return new THREE.Points(geo, mat);
     }
-    
+
     // 创建发光粒子
     function createGlowingParticles() {
         const canvas = document.createElement('canvas');
@@ -8727,7 +9117,7 @@ function showDeptPage(deptId) {
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, 32, 32);
         const texture = new THREE.CanvasTexture(canvas);
-        
+
         const geo = new THREE.BufferGeometry();
         const pos = [];
         const colors = [];
@@ -8738,7 +9128,7 @@ function showDeptPage(deptId) {
             new THREE.Color(0xff0055),
             new THREE.Color(0x00ff99)
         ];
-        
+
         for (let i = 0; i < 100; i++) {
             pos.push(
                 (Math.random() - 0.5) * 1000,
@@ -8750,7 +9140,7 @@ function showDeptPage(deptId) {
         }
         geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
         geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-        
+
         const mat = new THREE.PointsMaterial({
             size: 8,
             map: texture,
@@ -8762,15 +9152,15 @@ function showDeptPage(deptId) {
         });
         return new THREE.Points(geo, mat);
     }
-    
+
     function initNebulaSystem(container, ipData) {
         if (!container || !THREE) return;
-        
+
         // 尝试移除"继续探索"按钮 (用户反馈冗余)
         try {
             const nextBtns = document.querySelectorAll('.nebula-next-btn');
             nextBtns.forEach(b => b.style.display = 'none');
-            
+
             // 兜底查找
             const possibleBtns = document.querySelectorAll('button, div[onclick], div.btn');
             possibleBtns.forEach(el => {
@@ -8790,26 +9180,26 @@ function showDeptPage(deptId) {
             nebulaRenderer.dispose();
         }
         container.innerHTML = '';
-        
+
         // 场景初始化
         nebulaScene = new THREE.Scene();
         nebulaScene.fog = new THREE.FogExp2(0x050510, 0.0025);
-        
+
         nebulaCamera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 1, 2000);
         nebulaCamera.position.set(0, 100, 350);
-        
+
         nebulaRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         nebulaRenderer.setSize(container.clientWidth, container.clientHeight);
         nebulaRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         container.appendChild(nebulaRenderer.domElement);
-        
+
         nebulaLabelRenderer = new CSS2DRenderer();
         nebulaLabelRenderer.setSize(container.clientWidth, container.clientHeight);
         nebulaLabelRenderer.domElement.style.position = 'absolute';
         nebulaLabelRenderer.domElement.style.top = '0px';
         nebulaLabelRenderer.domElement.style.pointerEvents = 'none';
         container.appendChild(nebulaLabelRenderer.domElement);
-        
+
         // OrbitControls 简化版 (手动实现基本旋转)
         nebulaControls = {
             autoRotate: true,
@@ -8827,106 +9217,106 @@ function showDeptPage(deptId) {
                 }
             }
         };
-        
+
         // 背景星空
         const starTexture = createStarTexture();
         nebulaScene.add(createBackgroundLayer(2000, 3, 1800, starTexture));
         nebulaScene.add(createBackgroundLayer(1000, 5, 1200, starTexture));
-        
+
         // 蓝紫色星尘层
         dustLayer = createBackgroundLayer(600, 2, 900, starTexture);
         dustLayer.material.color.setHex(0x6666ff);
         nebulaScene.add(dustLayer);
-        
+
         // 创建星云效果
         nebulaCloud1 = createNebulaCloud(0x00f3ff, 800, 300); // 青色星云
         nebulaCloud2 = createNebulaCloud(0xbc13fe, 600, 400); // 紫色星云
         nebulaScene.add(nebulaCloud1);
         nebulaScene.add(nebulaCloud2);
-        
+
         // 添加发光粒子
         const glowParticles = createGlowingParticles();
         nebulaScene.add(glowParticles);
-        
+
         // 星座主体
         constellationGroup = new THREE.Group();
         nebulaScene.add(constellationGroup);
-        
+
         const nodes = [];
         intersectObjects = [];
-        
-        
+
+
         const materialCache = {};
         PALETTE.forEach(color => {
             materialCache[color] = new THREE.MeshBasicMaterial({ color: color });
         });
-        
+
         const geometry = new THREE.SphereGeometry(1, 16, 16);
-        
+
         // 创建节点
         ipData.forEach((item, i) => {
             const colorHex = PALETTE[Math.floor(Math.random() * PALETTE.length)];
-            
+
             const x = (Math.random() - 0.5) * 500;
             const y = (Math.random() - 0.5) * 150;
             const z = (Math.random() - 0.5) * 500;
             const pos = new THREE.Vector3(x, y, z);
-            
+
             const dot = new THREE.Mesh(geometry, materialCache[colorHex]);
             dot.position.copy(pos);
             const size = Math.random() * 2 + 1;
             dot.scale.set(size, size, size);
-            
+
             dot.userData = { id: i, isDot: true, color: colorHex };
-            
+
             constellationGroup.add(dot);
             intersectObjects.push(dot);
-            
+
             // HTML 卡片
             const div = document.createElement('div');
             div.className = 'nebula-node-card';
             div.style.setProperty('--highlight-color', '#' + new THREE.Color(colorHex).getHexString());
-            
+
             const hasImg = !!item.photo;
-            div.innerHTML = 
+            div.innerHTML =
                 '<div class="img-wrapper ' + (hasImg ? '' : 'no-img') + '">' +
                     (hasImg ? '<img src="' + item.photo + '" class="node-img" onerror="this.style.display=\'none\'">' : '') +
                 '</div>' +
                 '<div class="node-text">' + item.ip + '</div>' +
                 '<div class="node-author">by ' + item.name + '</div>';
-            
+
             // 存储数据用于点击弹窗
             div.dataset.ip = item.ip;
             div.dataset.author = item.name;
             div.dataset.photo = item.photo || '';
-            
+
             // 点击事件 - 显示详情弹窗
             div.addEventListener('click', function(e) {
                 e.stopPropagation();
                 showNebulaDetail(this.dataset.ip, this.dataset.author, this.dataset.photo);
             });
-            
+
             const label = new CSS2DObject(div);
             label.position.set(0, 10, 0);
             dot.add(label);
-            
+
             dot.userData.domElement = div;
-            
+
             nodes.push({ mesh: dot, pos: pos, color: new THREE.Color(colorHex) });
         });
-        
+
         // 连线
         const linePoints = [];
         const lineColors = [];
         const connectDistance = 90;
-        
+
         for (let i = 0; i < nodes.length; i++) {
             for (let j = i + 1; j < nodes.length; j++) {
                 const dist = nodes[i].pos.distanceTo(nodes[j].pos);
                 if (dist < connectDistance) {
                     linePoints.push(nodes[i].pos.x, nodes[i].pos.y, nodes[i].pos.z);
                     linePoints.push(nodes[j].pos.x, nodes[j].pos.y, nodes[j].pos.z);
-                    
+
                     const c1 = nodes[i].color;
                     const c2 = nodes[j].color;
                     lineColors.push(c1.r, c1.g, c1.b);
@@ -8934,11 +9324,11 @@ function showDeptPage(deptId) {
                 }
             }
         }
-        
+
         const lineGeo = new THREE.BufferGeometry();
         lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePoints, 3));
         lineGeo.setAttribute('color', new THREE.Float32BufferAttribute(lineColors, 3));
-        
+
         const lineMat = new THREE.LineBasicMaterial({
             vertexColors: true,
             transparent: true,
@@ -8946,14 +9336,14 @@ function showDeptPage(deptId) {
             blending: THREE.AdditiveBlending,
             linewidth: 2
         });
-        
+
         const lines = new THREE.LineSegments(lineGeo, lineMat);
         constellationGroup.add(lines);
-        
+
         // 射线检测
         nebulaRaycaster = new THREE.Raycaster();
         nebulaMouse = new THREE.Vector2();
-        
+
         // 鼠标拖拽控制
         let isDragging = false;
         let isScrolling = false;
@@ -8967,7 +9357,7 @@ function showDeptPage(deptId) {
         let targetRotationX = 0;
         let isPointerDown = false;
         const CLICK_THRESHOLD = 6; // px — 小于此距离视为点击而非拖拽
-        
+
         // 禁用swiper在星图区域的所有交互
         function disableSwiper() {
             if (window.reportSwiper) {
@@ -8976,7 +9366,7 @@ function showDeptPage(deptId) {
                 window.reportSwiper.allowSlidePrev = false;
             }
         }
-        
+
         function enableSwiper() {
             if (window.reportSwiper) {
                 window.reportSwiper.allowTouchMove = true;
@@ -8984,7 +9374,7 @@ function showDeptPage(deptId) {
                 window.reportSwiper.allowSlidePrev = true;
             }
         }
-        
+
         // 点击检测：用 raycasting 找到被点击的星球并弹出详情
         function handleNebulaClick(clientX, clientY) {
             var rect = container.getBoundingClientRect();
@@ -9002,7 +9392,7 @@ function showDeptPage(deptId) {
             }
             return false;
         }
-        
+
         function onMouseDown(event) {
             if (event.button !== 0) return;
             isPointerDown = true;
@@ -9016,7 +9406,7 @@ function showDeptPage(deptId) {
             event.preventDefault();
             event.stopPropagation();
         }
-        
+
         function onMouseUp(event) {
             isPointerDown = false;
             var dx = Math.abs(event.clientX - mouseDownX);
@@ -9031,12 +9421,12 @@ function showDeptPage(deptId) {
                 enableSwiper();
             }, 150);
         }
-        
+
         function onMouseMove(event) {
             var rect = container.getBoundingClientRect();
             nebulaMouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
             nebulaMouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-            
+
             if (!isPointerDown) return;
 
             // 判断是否超过点击阈值，升级为拖拽
@@ -9047,7 +9437,7 @@ function showDeptPage(deptId) {
                     isDragging = true;
                 }
             }
-            
+
             if (isDragging) {
                 var deltaX = event.clientX - previousMouseX;
                 targetRotationY += deltaX * 0.002;
@@ -9058,18 +9448,18 @@ function showDeptPage(deptId) {
                 event.stopPropagation();
             }
         }
-        
+
         function onMouseLeave() {
             isPointerDown = false;
             isDragging = false;
             setTimeout(function() { enableSwiper(); }, 100);
         }
-        
+
         // 允许滚轮翻页
         function onWheel(event) {
             return true;
         }
-        
+
         // 智能触摸处理 - 区分点击、拖拽(3D旋转)和滑动(翻页)
         function onTouchStart(event) {
             if (event.touches.length === 1) {
@@ -9082,37 +9472,37 @@ function showDeptPage(deptId) {
                 nebulaControls.autoRotate = false;
             }
         }
-        
+
         function onTouchMove(event) {
             if (event.touches.length === 1) {
                 var currentX = event.touches[0].clientX;
                 var currentY = event.touches[0].clientY;
-                
+
                 if (isScrolling) {
                     enableSwiper();
                     return true;
                 }
-                
+
                 if (isDragging) {
                     var rect = container.getBoundingClientRect();
                     nebulaMouse.x = ((currentX - rect.left) / rect.width) * 2 - 1;
                     nebulaMouse.y = -((currentY - rect.top) / rect.height) * 2 + 1;
-                    
+
                     var deltaX = currentX - previousMouseX;
                     targetRotationY += deltaX * 0.002;
                     targetRotationX = 0;
                     previousMouseX = currentX;
                     previousMouseY = currentY;
-                    
+
                     disableSwiper();
                     event.preventDefault();
                     event.stopPropagation();
                     return false;
                 }
-                
+
                 var diffX = Math.abs(currentX - startX);
                 var diffY = Math.abs(currentY - startY);
-                
+
                 if (diffX > CLICK_THRESHOLD || diffY > CLICK_THRESHOLD) {
                     if (diffY > diffX * 1.3) {
                         isScrolling = true;
@@ -9127,7 +9517,7 @@ function showDeptPage(deptId) {
                 }
             }
         }
-        
+
         function onTouchEnd(event) {
             // 触摸结束：检测是否为点击（未进入拖拽和滚动状态）
             if (!isDragging && !isScrolling) {
@@ -9147,7 +9537,7 @@ function showDeptPage(deptId) {
                 enableSwiper();
             }, 150);
         }
-        
+
         // 使用捕获阶段来确保事件先被处理
         container.addEventListener('mousedown', onMouseDown, true);
         container.addEventListener('mouseup', onMouseUp, true);
@@ -9157,11 +9547,11 @@ function showDeptPage(deptId) {
         container.addEventListener('touchstart', onTouchStart, { passive: false, capture: true });
         container.addEventListener('touchmove', onTouchMove, { passive: false, capture: true });
         container.addEventListener('touchend', onTouchEnd, { passive: false, capture: true });
-        
+
         function updateInteraction() {
             nebulaRaycaster.setFromCamera(nebulaMouse, nebulaCamera);
             const intersects = nebulaRaycaster.intersectObjects(intersectObjects);
-            
+
             let target = null;
             if (intersects.length > 0 && !isDragging) {
                 // 只有中近距离才能交互
@@ -9170,24 +9560,24 @@ function showDeptPage(deptId) {
                     target = intersects[0].object;
                 }
             }
-            
+
             // 距离阈值定义（带滞后缓冲区防止闪烁）
             const DIST_NEAR = 280;
             const DIST_NEAR_OUT = 300;  // 从近到中的阈值（滞后）
             const DIST_MID = 400;
             const DIST_MID_OUT = 430;   // 从中到远的阈值（滞后）
-            
+
             // 更新所有卡片的距离状态分类
             intersectObjects.forEach(obj => {
                 if (obj.userData.domElement) {
                     const worldPos = new THREE.Vector3();
                     obj.getWorldPosition(worldPos);
                     const distToCamera = worldPos.distanceTo(nebulaCamera.position);
-                    
+
                     const el = obj.userData.domElement;
                     const currentState = obj.userData.distState || 'far';
                     let newState = currentState;
-                    
+
                     // 使用滞后逻辑防止在边界抖动
                     if (currentState === 'near') {
                         // 当前是近，需要超过DIST_NEAR_OUT才变成中
@@ -9209,7 +9599,7 @@ function showDeptPage(deptId) {
                             newState = 'mid';
                         }
                     }
-                    
+
                     // 只有状态改变时才更新DOM
                     if (newState !== currentState) {
                         obj.userData.distState = newState;
@@ -9218,7 +9608,7 @@ function showDeptPage(deptId) {
                     }
                 }
             });
-            
+
             // 使用防抖机制防止hover闪烁
             // 如果当前有悬停对象，只有当鼠标明确离开（target为null且持续一段时间）才取消
             if (target) {
@@ -9229,10 +9619,10 @@ function showDeptPage(deptId) {
                         hoveredObject.userData.domElement.classList.remove('active');
                         // 不要改变scale，避免射线检测不稳定
                     }
-                    
+
                     hoveredObject = target;
                     hoverLostFrames = 0;
-                    
+
                     if (hoveredObject.userData.domElement) {
                         hoveredObject.userData.domElement.classList.add('active');
                     }
@@ -9257,41 +9647,41 @@ function showDeptPage(deptId) {
                 }
             }
         }
-        
+
         function animate() {
             if (!isNebulaActive) return;
             nebulaAnimationId = requestAnimationFrame(animate);
-            
+
             // 应用拖拽旋转 — 拖拽时高跟手度，松手后平滑惯性
             var smoothFactor = isDragging ? 0.22 : 0.06;
             constellationGroup.rotation.y += (targetRotationY - constellationGroup.rotation.y) * smoothFactor;
             constellationGroup.rotation.x += (targetRotationX - constellationGroup.rotation.x) * smoothFactor;
-            
+
             // 惯性衰减 - 松开鼠标后继续慢慢转动
             if (!isDragging) {
                 targetRotationY += (targetRotationY - constellationGroup.rotation.y) * 0.015;
             }
-            
+
             nebulaControls.update();
             updateInteraction();
-            
+
             // 自动旋转（加快速度）
             if (nebulaControls.autoRotate) {
                 constellationGroup.rotation.y += 0.0012;
             }
-            
+
             // 背景层动画
             if (dustLayer) dustLayer.rotation.y -= 0.0002;
             if (nebulaCloud1) nebulaCloud1.rotation.z += 0.0001;
             if (nebulaCloud2) nebulaCloud2.rotation.z -= 0.00008;
-            
+
             nebulaRenderer.render(nebulaScene, nebulaCamera);
             nebulaLabelRenderer.render(nebulaScene, nebulaCamera);
         }
-        
+
         isNebulaActive = true;
         animate();
-        
+
         // 响应式
         function onResize() {
             if (!container || !nebulaCamera || !nebulaRenderer) return;
@@ -9302,7 +9692,7 @@ function showDeptPage(deptId) {
         }
         window.addEventListener('resize', onResize);
     }
-    
+
     function stopNebulaSystem() {
         isNebulaActive = false;
         if (nebulaAnimationId) {
@@ -9310,7 +9700,7 @@ function showDeptPage(deptId) {
             nebulaAnimationId = null;
         }
     }
-    
+
     // 显示星云卡片详情弹窗
     window.showNebulaDetail = function(ip, author, photo) {
         const modal = document.getElementById('nebula-detail-modal');
@@ -9318,13 +9708,13 @@ function showDeptPage(deptId) {
         const imgEl = document.getElementById('nebula-detail-img');
         const ipEl = document.getElementById('nebula-detail-ip');
         const authorEl = document.getElementById('nebula-detail-author');
-        
+
         if (!modal) return;
         if (contentEl) contentEl.classList.remove('zoom-text');
-        
+
         ipEl.textContent = ip || '';
         authorEl.textContent = author ? 'by ' + author : '';
-        
+
         if (photo) {
             imgEl.src = photo;
             imgEl.style.display = 'block';
@@ -9369,10 +9759,10 @@ function showDeptPage(deptId) {
                 });
             }
         }
-        
+
         modal.classList.add('show');
     }
-    
+
     // 隐藏星云卡片详情弹窗
     window.hideNebulaDetail = function() {
         const modal = document.getElementById('nebula-detail-modal');
@@ -9380,14 +9770,14 @@ function showDeptPage(deptId) {
             modal.classList.remove('show');
         }
     }
-    
+
     // 监听Swiper滑动到星图页面
     function setupNebulaObserver() {
         // 等待Swiper初始化
         const checkSwiper = setInterval(() => {
             if (window.reportSwiper) {
                 clearInterval(checkSwiper);
-                
+
                 window.reportSwiper.on('slideChange', function() {
                     const activeSlide = this.slides[this.activeIndex];
                     if (activeSlide && activeSlide.classList.contains('soul-nebula-slide')) {
@@ -9410,7 +9800,7 @@ function showDeptPage(deptId) {
                         }
                     }
                 });
-                
+
                 // 检查当前是否已经在星图页面
                 const activeSlide = window.reportSwiper.slides[window.reportSwiper.activeIndex];
                 if (activeSlide && activeSlide.classList.contains('soul-nebula-slide')) {
@@ -9429,7 +9819,7 @@ function showDeptPage(deptId) {
             }
         }, 500);
     }
-    
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', setupNebulaObserver);
     } else {
@@ -9457,7 +9847,7 @@ function showDeptPage(deptId) {
  */
 const YouziReadingMode = (function() {
     'use strict';
-    
+
     // ==================== 配置参数 ====================
     const CONFIG = {
         imageDisplayTime: 800,       // 图片放大展示时间(毫秒) - 改为0.8秒
@@ -9469,7 +9859,7 @@ const YouziReadingMode = (function() {
         // 修正对应关系: DEPARTMENTS数组顺序是 art, cos, pr, tech, music, dance
         planetOrder: [0, 1, 2, 3, 4, 5]
     };
-    
+
     // 正确的部门ID和名称映射（按DEPARTMENTS数组顺序）
     const DEPT_MAP = [
         { id: 'art', name: '原创部' },
@@ -9479,7 +9869,7 @@ const YouziReadingMode = (function() {
         { id: 'music', name: '轻音部' },
         { id: 'dance', name: '舞装部' }
     ];
-    
+
     // ==================== 状态变量 ====================
     let isActive = false;
     let isPaused = false;
@@ -9551,7 +9941,7 @@ const YouziReadingMode = (function() {
             deptsContainer.innerHTML = (user.depts || []).map(d => '<span class="dept-chip">' + d + '</span>').join('');
         }
     }
-    
+
     // ==================== 工具函数 ====================
     function delay(ms) {
         return new Promise(resolve => {
@@ -9559,21 +9949,21 @@ const YouziReadingMode = (function() {
             timeoutIds.push(id);
         });
     }
-    
+
     function clearAllTimeouts() {
         timeoutIds.forEach(id => clearTimeout(id));
         timeoutIds = [];
     }
-    
+
     function updateStatus(text) {
         if (statusText) statusText.textContent = text;
         console.log('[YouziReadingMode]', text);
     }
-    
+
     function updateProgress(percent) {
         if (progressBar) progressBar.style.width = percent + '%';
     }
-    
+
     async function waitFor(conditionFn, timeout = 10000, interval = 100) {
         const startTime = Date.now();
         while (!conditionFn()) {
@@ -9583,12 +9973,12 @@ const YouziReadingMode = (function() {
         }
         return true;
     }
-    
+
     // ==================== 控制面板UI（隐藏模式，无可见UI） ====================
     function createControlPanel() {
         const existing = document.getElementById('youzi-reading-control');
         if (existing) existing.remove();
-        
+
         // 只注入隐藏返回按钮的CSS，不显示任何UI
         controlPanel = document.createElement('style');
         controlPanel.id = 'youzi-reading-control';
@@ -9599,18 +9989,18 @@ const YouziReadingMode = (function() {
         `;
         document.head.appendChild(controlPanel);
     }
-    
+
     function removeControlPanel() {
         if (controlPanel) { controlPanel.remove(); controlPanel = null; }
     }
-    
+
     function togglePause() {
         isPaused = !isPaused;
         const btn = document.getElementById('youzi-pause-btn');
         if (btn) btn.textContent = isPaused ? '继续' : '暂停';
         updateStatus(isPaused ? '已暂停' : '继续播放');
     }
-    
+
     // ==================== 图片展示动画 ====================
     function createImageOverlay() {
         let overlay = document.getElementById('youzi-image-overlay');
@@ -9644,35 +10034,35 @@ const YouziReadingMode = (function() {
         }
         return overlay;
     }
-    
+
     async function showImage(url, author, desc) {
         if (!url) {
             console.log('[YouziReadingMode] showImage: no url provided');
             return;
         }
-        
+
         console.log('[YouziReadingMode] showImage:', url, author, desc);
-        
+
         const overlay = createImageOverlay();
         const container = overlay.querySelector('.image-container');
         const authorEl = overlay.querySelector('.image-author');
         const descEl = overlay.querySelector('.image-desc');
-        
+
         const isVideo = url && url.match(/\.(mp4|webm|mov)(\?.*)?$/i);
-        container.innerHTML = isVideo 
+        container.innerHTML = isVideo
             ? '<video src="' + url + '" muted autoplay loop style="max-width:90vw; max-height:75vh; object-fit:contain;"></video>'
             : '<img src="' + url + '" alt="" style="max-width:90vw; max-height:75vh; object-fit:contain;">';
-        
+
         // 使用原投稿人署名
         authorEl.textContent = author ? '@' + author : '';
         descEl.textContent = desc || '';
         overlay.classList.add('active');
-        
+
         await delay(CONFIG.imageDisplayTime);
         overlay.classList.remove('active');
         await delay(300);
     }
-    
+
     async function showImagesSequentially(images) {
         for (let i = 0; i < images.length; i++) {
             if (!isActive || isPaused) {
@@ -9683,7 +10073,7 @@ const YouziReadingMode = (function() {
             await showImage(images[i].url, images[i].author, images[i].desc);
         }
     }
-    
+
     // ==================== 收集部门图片 ====================
     function collectDeptImages(deptName) {
         if (typeof DB === 'undefined' || !Array.isArray(DB)) return [];
@@ -9698,22 +10088,22 @@ const YouziReadingMode = (function() {
         });
         return allImages;
     }
-    
+
     // ==================== 主流程控制 v2.0 ====================
     // 完全复用原有的交互逻辑，只是自动触发点击/滑动事件
-    
+
     async function enterGalaxyView() {
         updateStatus('准备登录...');
         currentPhase = 'login';
         const body = document.body;
-        
+
         // 如果已经在星系视图，跳过
         if (body.classList.contains('phase-system')) {
             updateStatus('已在星系视图');
             updateProgress(10);
             return;
         }
-        
+
         // 1. 登录阶段 - 使用"佑子"作为用户名
         if (!body.classList.contains('phase-ticket') && !body.classList.contains('phase-flight')) {
             // 阅读模式使用"佑子"作为用户名（船票和报告显示的名字）
@@ -9730,7 +10120,7 @@ const YouziReadingMode = (function() {
                 // 兜底fallback
                 if (!targetUser) targetUser = DB[0];
             }
-            
+
             if (targetUser) {
                 const input = document.getElementById('username');
                 if (input) {
@@ -9738,18 +10128,18 @@ const YouziReadingMode = (function() {
                     input.value = targetUser.name;
                     updateStatus('登录用户: 佑子');
                     await delay(500);
-                    
+
                     // 设置标志，防止verifyUser再次触发阅读模式
                     window._youziReadingModeInternalCall = true;
-                    
+
                     // 调用原有的验证函数
                     if (typeof verifyUser === 'function') {
                         verifyUser();
                     }
-                    
+
                     // 清除标志
                     window._youziReadingModeInternalCall = false;
-                    
+
                     // 验证后立即覆盖所有显示为"佑子"，并使用干净数据
                     input.value = '佑子';
 
@@ -9759,16 +10149,16 @@ const YouziReadingMode = (function() {
                     window._youziCleanUser = cleanUser;
 
                     applyYouziTicketUI(cleanUser);
-                    
+
                     await delay(300);
                 }
             }
         }
-        
+
         // 2. 等待进入船票阶段
         updateStatus('等待船票...');
         await waitFor(() => body.classList.contains('phase-ticket'), 5000);
-        
+
         // 确保船票为"佑子"且有6个部门
         if (window._youziCleanUser) {
             applyYouziTicketUI(window._youziCleanUser);
@@ -9776,14 +10166,14 @@ const YouziReadingMode = (function() {
             const ticketNameEl = document.getElementById('ticket-name');
             if (ticketNameEl) ticketNameEl.innerText = '佑子';
         }
-        
+
         updateProgress(5);
         await delay(2000); // 让用户看到船票动画
-        
+
         // 3. 自动点击启航
         updateStatus('准备启航...');
         currentPhase = 'flight';
-        
+
         // 模拟点击启航按钮，或直接调用 launchShip
         const launchBtn = document.querySelector('.flight-btn') || document.querySelector('[onclick*="launchShip"]');
         if (launchBtn) {
@@ -9791,7 +10181,7 @@ const YouziReadingMode = (function() {
         } else if (typeof launchShip === 'function') {
             launchShip();
         }
-        
+
         // 4. 等待飞行动画完成，进入星系视图
         updateStatus('飞船启航中...');
         await waitFor(() => body.classList.contains('phase-system'), 15000);
@@ -9799,60 +10189,60 @@ const YouziReadingMode = (function() {
         updateProgress(10);
         await delay(1500); // 让用户欣赏星系视图
     }
-    
+
     async function processPlanet(planetIndex) {
         // 使用正确的部门映射（按DEPARTMENTS数组顺序）
         const deptInfo = DEPT_MAP[planetIndex];
         const deptId = deptInfo.id;
         const deptName = deptInfo.name;
-        
+
         updateStatus('飞向 ' + deptName + '...');
         currentPhase = 'travelling';
-        
+
         // 1. 调用原有的 goToPlanet 让飞船飞向星球
         // 这会自动设置 onArrival 回调，到达后触发 showDeptPage
         if (typeof starshipObj !== 'undefined' && starshipObj && typeof starshipObj.goToPlanet === 'function') {
             starshipObj.goToPlanet(planetIndex);
         }
-        
+
         // 2. 等待飞船到达并触发部门intro弹窗
         updateStatus('飞船移动中...');
         await waitFor(() => {
-            return document.querySelector('.dept-intro-modal.active') || 
+            return document.querySelector('.dept-intro-modal.active') ||
                    document.body.classList.contains('phase-dept');
         }, CONFIG.waitForAnimation + 3000);
-        
+
         // 3. 处理 dept-intro-modal 中的 Swiper (如果存在)
         const introModal = document.querySelector('.dept-intro-modal.active');
         if (introModal) {
             updateStatus(deptName + ' - 浏览社团数据...');
             currentPhase = 'dept-intro';
-            
+
             // 在intro中显示社团整体数据
             await showDeptSummaryData(deptName);
-            
+
             // 找到intro中的Swiper
             const introSwiper = introModal.querySelector('.dept-swiper');
             if (introSwiper && introSwiper.swiper) {
                 const swiper = introSwiper.swiper;
                 const totalSlides = swiper.slides.length;
-                
+
                 // 自动翻页浏览intro
                 for (let i = 0; i < totalSlides - 1; i++) {
                     if (!isActive) return;
                     while (isPaused && isActive) await delay(100);
-                    
+
                     await delay(CONFIG.introSlideInterval);
                     swiper.slideNext();
                 }
-                
+
                 // 停留在最后一页（进入按钮页）
                 await delay(CONFIG.introSlideInterval);
             } else {
                 // 如果没有swiper，等待一会
                 await delay(CONFIG.introSlideInterval * 2);
             }
-            
+
             // 4. 点击"进入部门空间"按钮
             const enterBtn = document.getElementById('enter-dept-btn');
             if (enterBtn) {
@@ -9861,27 +10251,27 @@ const YouziReadingMode = (function() {
                 await delay(800); // 等待modal关闭动画
             }
         }
-        
+
         // 5. 等待进入部门页面
         await waitFor(() => document.body.classList.contains('phase-dept'), 3000);
-        
+
         // 6. 在部门页面先自动滚动到底部，再展示图片
         if (document.body.classList.contains('phase-dept')) {
             currentPhase = 'dept-report';
             updateStatus(deptName + ' - 浏览美术风格...');
-            
+
             // 先自动滚动到底部展示部门页面
             await autoScrollDeptPage();
-            
+
             // 滚动完成后再收集并展示部门投稿图片
             updateStatus(deptName + ' - 展示投稿照片...');
             const images = collectDeptImages(deptName);
             if (images.length > 0) {
                 await showImagesSequentially(images);
             }
-            
+
             await delay(CONFIG.deptPageStayTime);
-            
+
             // 7. 点击返回按钮，调用原有的 backFromDept
             updateStatus('返回星系...');
             const backBtn = document.querySelector('.back-btn') || document.querySelector('[onclick*="backFromDept"]');
@@ -9890,48 +10280,48 @@ const YouziReadingMode = (function() {
             } else if (typeof backFromDept === 'function') {
                 backFromDept();
             }
-            
+
             await delay(1000); // 等待返回动画
         }
-        
+
         // 8. 等待返回星系视图
         await waitFor(() => document.body.classList.contains('phase-system') && !document.body.classList.contains('phase-dept'), 3000);
-        
+
         const progress = 10 + (planetIndex + 1) * 13;
         updateProgress(Math.min(progress, 90));
         await delay(800);
     }
-    
+
     // 修改intro页面数据为社团整体数据（总和与突出数据）
     async function showDeptSummaryData(deptName) {
         if (typeof DB === 'undefined' || !Array.isArray(DB)) return;
-        
+
         const deptMembers = DB.filter(u => u.deptData && u.deptData[deptName]);
         if (deptMembers.length === 0) return;
-        
+
         // 计算统计数据
         const stats1Data = deptMembers.map(u => ({ name: u.name, value: u.deptData[deptName].stats1 || 0 })).filter(v => v.value > 0);
         const stats2Data = deptMembers.map(u => ({ name: u.name, value: u.deptData[deptName].stats2 || 0 })).filter(v => v.value > 0);
-        
+
         const stats1Total = stats1Data.reduce((sum, item) => sum + item.value, 0);
         const stats2Total = stats2Data.reduce((sum, item) => sum + item.value, 0);
         const stats1TopUser = stats1Data.length > 0 ? stats1Data.reduce((max, item) => item.value > max.value ? item : max, stats1Data[0]) : null;
         const stats2TopUser = stats2Data.length > 0 ? stats2Data.reduce((max, item) => item.value > max.value ? item : max, stats2Data[0]) : null;
-        
+
         console.log('[YouziReadingMode] Dept summary data:', {
             deptName, stats1Total, stats2Total,
             stats1TopUser: stats1TopUser ? stats1TopUser.name + '(' + stats1TopUser.value + ')' : 'none',
             stats2TopUser: stats2TopUser ? stats2TopUser.name + '(' + stats2TopUser.value + ')' : 'none'
         });
-        
+
         // 修改intro modal中的数据
         const introModal = document.querySelector('.dept-intro-modal.active');
         if (!introModal) return;
-        
+
         // 找到所有netease-card卡片
         const cards = introModal.querySelectorAll('.netease-card');
         let cardIndex = 0;
-        
+
         cards.forEach(card => {
             // 找到数字显示元素
             const numberEl = card.querySelector('.netease-number');
@@ -9939,11 +10329,11 @@ const YouziReadingMode = (function() {
             const descEl = card.querySelector('.netease-desc');
             const labelEl = card.querySelector('.netease-label');
             const statsInfoEl = card.querySelector('.dept-stats-info');
-            
+
             // 跳过欢迎页和进入按钮页
             if (labelEl && labelEl.textContent.includes('ENTERING')) return;
             if (card.querySelector('#enter-dept-btn')) return;
-            
+
             // 第一个数据卡片 - 显示stats1总和
             if (numberEl && cardIndex === 0 && stats1Total > 0) {
                 numberEl.textContent = stats1Total;
@@ -9981,10 +10371,10 @@ const YouziReadingMode = (function() {
     // 自动滚动部门页面
     async function autoScrollDeptPage() {
         console.log('[YouziReadingMode] autoScrollDeptPage started');
-        
+
         // 等待页面内容加载
         await delay(1500);
-        
+
         // 滚动容器是 #dept-layer，不是 #dept-content
         // #dept-layer 有 overflow-y: auto，是实际可滚动的元素
         const scrollContainer = document.getElementById('dept-layer');
@@ -9992,40 +10382,40 @@ const YouziReadingMode = (function() {
             console.log('[YouziReadingMode] dept-layer not found!');
             return;
         }
-        
+
         // 等待内容渲染完成
         await delay(1000);
-        
+
         // 先重置滚动位置到顶部
         scrollContainer.scrollTop = 0;
-        
+
         // 触发重排确保布局计算正确
         void scrollContainer.offsetHeight;
-        
+
         const scrollHeight = scrollContainer.scrollHeight;
         const clientHeight = scrollContainer.clientHeight;
         const scrollDistance = scrollHeight - clientHeight;
-        
+
         console.log('[YouziReadingMode] Scroll info - scrollHeight:', scrollHeight, 'clientHeight:', clientHeight, 'scrollDistance:', scrollDistance);
-        
+
         if (scrollDistance <= 10) {
             // 如果没什么可滚动的，等一会就返回
             console.log('[YouziReadingMode] Nothing to scroll, waiting...');
             await delay(3000);
             return;
         }
-        
+
         // 计算滚动时间，速度约75px/s（快速滚动）
         const scrollSpeed = 100; // px/s
         const scrollDuration = Math.max(scrollDistance / scrollSpeed * 1000, 3000);
         const startTime = Date.now();
-        
+
         updateStatus('自动滚动浏览部门内容...');
         console.log('[YouziReadingMode] Starting scroll animation, duration:', scrollDuration, 'ms, distance:', scrollDistance);
-        
+
         // 使用 easeInOutQuad 缓动函数实现更自然的滚动
         const easeInOutQuad = (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-        
+
         // 滚动动画循环
         const animateScroll = () => {
             return new Promise(resolve => {
@@ -10038,40 +10428,40 @@ const YouziReadingMode = (function() {
                         setTimeout(scrollFrame, 100);
                         return;
                     }
-                    
+
                     const elapsed = Date.now() - startTime;
                     if (elapsed >= scrollDuration) {
                         scrollContainer.scrollTop = scrollDistance;
                         resolve();
                         return;
                     }
-                    
+
                     const progress = elapsed / scrollDuration;
                     const easedProgress = easeInOutQuad(progress);
                     scrollContainer.scrollTop = Math.round(scrollDistance * easedProgress);
-                    
+
                     requestAnimationFrame(scrollFrame);
                 };
                 scrollFrame();
             });
         };
-        
+
         await animateScroll();
-        
+
         // 确保滚动到底部
         scrollContainer.scrollTop = scrollDistance;
         console.log('[YouziReadingMode] Scroll complete, final scrollTop:', scrollContainer.scrollTop);
-        
+
         // 在底部停留一会
         await delay(2000);
-        
+
         console.log('[YouziReadingMode] autoScrollDeptPage complete');
     }
-    
+
     async function enterFinalReport() {
         updateStatus('进入最终报告...');
         currentPhase = 'final-report';
-        
+
         // 点击太阳卡片进入最终报告
         const sunCard = document.getElementById('sun-card');
         if (sunCard) {
@@ -10081,28 +10471,28 @@ const YouziReadingMode = (function() {
             if (typeof window !== 'undefined') window.secretUnlocked = true;
             showReport();
         }
-        
+
         // 等待报告Swiper初始化
         await waitFor(() => typeof window.reportSwiper !== 'undefined' && window.reportSwiper, 5000);
         if (!window.reportSwiper) {
             updateStatus('报告加载失败');
             return;
         }
-        
+
         await delay(1000);
-        
+
         const swiper = window.reportSwiper;
         const totalSlides = swiper.slides.length;
-        
+
         // 阅读模式下只展示：引导页(transition-slide)、烟花页、弹幕页、星云页、memories页
         // 跳过个人数据页面
         for (let i = 0; i < totalSlides; i++) {
             if (!isActive) return;
             while (isPaused && isActive) await delay(100);
-            
+
             const currentSlide = swiper.slides[i];
             if (!currentSlide) continue;
-            
+
             // 判断页面类型
             const isTransitionSlide = currentSlide.classList.contains('transition-slide');
             const isFireworkSlide = currentSlide.classList.contains('firework-slide');
@@ -10110,7 +10500,7 @@ const YouziReadingMode = (function() {
             const isNebulaSlide = currentSlide.classList.contains('soul-nebula-slide');
             const hasMemoryCarousel = currentSlide.querySelector('.memory-carousel-track') !== null;
             const isStarWarsSlide = currentSlide.querySelector('.star-wars-container') !== null;
-            
+
             // 只处理引导页和特殊页面
             if (isTransitionSlide) {
                 updateStatus('引导页 ' + (i + 1) + '/' + totalSlides);
@@ -10162,20 +10552,20 @@ const YouziReadingMode = (function() {
                 // 其他个人数据页面，直接跳过不停留
                 // 静默跳过，不更新状态
             }
-            
+
             // 翻到下一页
             if (i < totalSlides - 1) {
                 swiper.slideNext();
                 await delay(500);
             }
-            
+
             updateProgress(90 + (i / totalSlides) * 10);
         }
-        
+
         updateProgress(100);
         updateStatus('阅读完成！');
     }
-    
+
     // 处理烟花页 - 等待所有投稿人名字出现，同时自动发射装饰烟花
     async function handleFireworkSlide(slide) {
         // 烟花页的文字会按顺序弹出
@@ -10189,20 +10579,20 @@ const YouziReadingMode = (function() {
                 return true;
             }).length;
         }
-        
+
         updateStatus('烟花页 - 展示 ' + totalQuotes + ' 条难忘的话...');
-        
+
         // 烟花JS每隔约1-2秒显示一个文字，动画持续8秒（已调整）
         // 总等待时间 = 所有文字出现时间 + 最后一个文字的动画时间
         const displayInterval = 1500; // 每条显示间隔
         const animationDuration = 8000; // 单条动画时长（与CSS同步）
         const totalWaitTime = (totalQuotes * displayInterval) + animationDuration;
-        
+
         // 最少等35秒，最多等2分钟
         const waitTime = Math.max(35000, Math.min(totalWaitTime, 120000));
-        
+
         console.log('[YouziReadingMode] Firework page: waiting', waitTime/1000, 'seconds for', totalQuotes, 'quotes');
-        
+
         // 在等待期间，每隔3-5秒自动发射一个无文字装饰烟花
         const decorationInterval = setInterval(() => {
             if (!isActive || isPaused) return;
@@ -10210,40 +10600,40 @@ const YouziReadingMode = (function() {
                 window.launchDecorationFirework();
             }
         }, 3500);
-        
+
         await delay(waitTime);
-        
+
         // 停止装饰烟花发射
         clearInterval(decorationInterval);
     }
-    
+
     // 处理弹幕页 - 等待弹幕滚动显示
     async function handleDanmakuSlide(slide) {
         // 弹幕是CSS动画自动滚动的，动画时长15-40秒不等
         const danmakuItems = slide.querySelectorAll('.danmaku-item');
         const itemCount = danmakuItems.length;
-        
+
         if (itemCount === 0) {
             await delay(5000);
             return;
         }
-        
+
         updateStatus('弹幕页 - 展示 ' + itemCount + ' 条关键词...');
-        
+
         // 弹幕动画时长在15-40秒之间，等待最长的弹幕滚动完成
         // 保守估计等待45秒让所有弹幕都滚动一遍
         const waitTime = 45000;
-        
+
         console.log('[YouziReadingMode] Danmaku page: waiting', waitTime/1000, 'seconds for', itemCount, 'items');
         await delay(waitTime);
     }
-    
+
     // 处理安利星云页 - 自动旋转并展示所有IP
     async function handleNebulaSlide(slide) {
         // 从data属性获取IP数据
         const ipDataBase64 = slide.dataset.nebulaIp;
         let ipData = [];
-        
+
         try {
             if (ipDataBase64) {
                 // base64数据的字段名是: name, ip, photo
@@ -10258,7 +10648,7 @@ const YouziReadingMode = (function() {
         } catch (e) {
             console.warn('[YouziReadingMode] Failed to parse nebula IP data:', e);
         }
-        
+
         if (ipData.length === 0) {
             // 尝试从DB获取
             if (typeof DB !== 'undefined') {
@@ -10271,15 +10661,15 @@ const YouziReadingMode = (function() {
                 console.log('[YouziReadingMode] Got nebula IP data from DB:', ipData.length, 'items');
             }
         }
-        
+
         if (ipData.length === 0) {
             console.log('[YouziReadingMode] No nebula IP data found');
             await delay(5000);
             return;
         }
-        
+
         updateStatus('安利星云 - 展示 ' + ipData.length + ' 个IP...');
-        
+
         // 自动左右旋转canvas
         const canvasContainer = slide.querySelector('#nebula-canvas-container');
         let rotationInterval = null;
@@ -10296,55 +10686,55 @@ const YouziReadingMode = (function() {
                 }
             }, 50);
         }
-        
+
         // 依次放大展示每个IP图片
         for (let i = 0; i < ipData.length && isActive; i++) {
             while (isPaused && isActive) await delay(100);
-            
+
             const ip = ipData[i];
             const displayName = ip.ipName || '未知IP';
             updateStatus('安利星云 (' + (i + 1) + '/' + ipData.length + '): ' + displayName);
-            
+
             // 使用放大展示图片（和其他图片一样的效果）
             if (ip.ipPhoto) {
                 await showImage(ip.ipPhoto, ip.author, displayName);
             }
         }
-        
+
         // 停止旋转
         if (rotationInterval) clearInterval(rotationInterval);
-        
+
         // 关闭详情弹窗
         if (typeof window.hideNebulaDetail === 'function') {
             window.hideNebulaDetail();
         }
     }
-    
+
     // 显示星云IP详情（备用，不再使用）
     async function showNebulaIPDetail(ip) {
         const modal = document.getElementById('nebula-detail-modal');
         const img = document.getElementById('nebula-detail-img');
         const ipEl = document.getElementById('nebula-detail-ip');
         const authorEl = document.getElementById('nebula-detail-author');
-        
+
         if (!modal || !img) return;
-        
+
         img.src = ip.ipPhoto || '';
         if (ipEl) ipEl.textContent = ip.ipName || '';
         if (authorEl) authorEl.textContent = '@' + (ip.author || '佑子') + (ip.ipReason ? ' - ' + ip.ipReason : '');
-        
+
         modal.classList.add('active');
         modal.style.display = 'flex';
         modal.style.opacity = '1';
     }
-    
+
     // ==================== 公共API ====================
     async function start() {
         if (isActive) {
             console.warn('[YouziReadingMode] Already running');
             return;
         }
-        
+
         console.log('[YouziReadingMode v2.0] Starting...');
         isActive = true;
         isPaused = false;
@@ -10352,35 +10742,35 @@ const YouziReadingMode = (function() {
         document.body.classList.add('youzi-reading-active');
         currentPlanetIndex = 0;
         currentPhase = 'idle';
-        
+
         createControlPanel();
         updateStatus('正在启动阅读模式...');
         updateProgress(0);
-        
+
         try {
             // 1. 进入星系视图
             await enterGalaxyView();
             if (!isActive) return;
-            
+
             // 2. 依次访问6个星球
             for (let i = 0; i < CONFIG.planetOrder.length; i++) {
                 if (!isActive) break;
                 while (isPaused && isActive) await delay(100);
-                
+
                 currentPlanetIndex = i;
                 await processPlanet(CONFIG.planetOrder[i]);
             }
-            
+
             // 3. 进入最终报告
             if (isActive) {
                 await enterFinalReport();
             }
-            
+
         } catch (error) {
             console.error('[YouziReadingMode] Error:', error);
             updateStatus('发生错误: ' + error.message);
         }
-        
+
         // 完成
         if (isActive) {
             updateStatus('🎉 阅读模式已完成');
@@ -10388,7 +10778,7 @@ const YouziReadingMode = (function() {
             stop();
         }
     }
-    
+
     function stop() {
         console.log('[YouziReadingMode] Stopping...');
         isActive = false;
@@ -10397,17 +10787,17 @@ const YouziReadingMode = (function() {
         window._youziReadingModeActive = false;
         document.body.classList.remove('youzi-reading-active');
         clearAllTimeouts();
-        
+
         // 清理overlay
         const imageOverlay = document.getElementById('youzi-image-overlay');
         if (imageOverlay) imageOverlay.remove();
-        
+
         removeControlPanel();
     }
-    
+
     function pause() { togglePause(); }
     function getStatus() { return { isActive, isPaused, currentPhase, currentPlanetIndex }; }
-    
+
     return { start, stop, pause, getStatus, CONFIG };
 })();
 
@@ -10457,4 +10847,3 @@ console.log('[YouziReadingMode] Module loaded. Enter "佑子" in login to start.
         // 绑定生成器面板事件（Excel上传、照片目录、BGM、导出按钮）
         bindGeneratorPanelEvents();
 
-    
